@@ -1,0 +1,377 @@
+openapi: 3.0.3
+info:
+  title: Auction Hackathon API
+  description: API for managing users, lots, bids, domains, licenses, and languages.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/domains:
+    get:
+      summary: Get all domains
+      operationId: getDomains
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Domain'
+
+  /api/languages:
+    get:
+      summary: Get all languages
+      operationId: getLanguages
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Language'
+
+  /api/licenses:
+    get:
+      summary: Get all licenses
+      operationId: getLicenses
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+
+  /api/users:
+    get:
+      summary: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/users/bids:
+    get:
+      summary: Get all bids made by the current user
+      operationId: getUserBids
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+
+  /api/tokens:
+    post:
+      summary: User login
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+
+  /api/lots:
+    get:
+      summary: Get all lots
+      operationId: getLots
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lot'
+
+    post:
+      summary: Create a new lot
+      operationId: createLot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotInput'
+      responses:
+        '201':
+          description: Lot created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+
+  /api/lots/{id}:
+    get:
+      summary: Get lot by ID
+      operationId: getLotById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+
+    patch:
+      summary: Update a lot
+      operationId: updateLot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotInput'
+      responses:
+        '200':
+          description: Lot updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+
+    delete:
+      summary: Delete a lot
+      operationId: deleteLot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lot deleted successfully
+
+  /api/lots/{id}/bids:
+    get:
+      summary: Get all bids for a lot
+      operationId: getLotBids
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+
+  /api/lots/bids:
+    post:
+      summary: Place a bid on a lot
+      operationId: placeBid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidInput'
+      responses:
+        '201':
+          description: Bid placed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bid'
+
+components:
+  schemas:
+    Domain:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    Language:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    License:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        isAdmin:
+          type: boolean
+
+    UserInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        isAdmin:
+          type: boolean
+
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    Lot:
+      type: object
+      properties:
+        id:
+          type: string
+        item:
+          $ref: '#/components/schemas/Project'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+
+    LotInput:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/ProjectInput'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+
+    Project:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        imgUrl:
+          type: string
+        domainId:
+          type: integer
+        licenseId:
+          type: integer
+        languageId:
+          type: integer
+
+    ProjectInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        imgUrl:
+          type: string
+        domainId:
+          type: integer
+        licenseId:
+          type: integer
+        languageId:
+          type: integer
+
+    Bid:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        lotId:
+          type: string
+        amount:
+          type: number
+
+    BidInput:
+      type: object
+      properties:
+        lotId:
+          type: string
+        amount:
+          type: number
+
+  
