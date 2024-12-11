@@ -1,7 +1,7 @@
 import { DBConnector } from "../database/connector.js";
+import { handleError, createErrorResponse } from "../utils/errorHandler.js";
 
 const connector = new DBConnector();
-
 const categories = ['domains', 'languages', 'licenses'];
 
 export const getAllCategories = (req, res) => {
@@ -10,9 +10,8 @@ export const getAllCategories = (req, res) => {
         for (const category of categories) {
             data[category] = connector.readAll(category);
         }
-
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+        handleError(res, createErrorResponse(500, 'Internal server error'));
     }
-}
+};

@@ -4,6 +4,7 @@ import auth from './routes/auth.js';
 import bids from "./routes/bids.js";
 import categories from './routes/categories.js';
 import lots from "./routes/lots.js";
+import {createErrorResponse} from "./utils/errorHandler.js";
 
 dotenv.config();
 
@@ -15,7 +16,8 @@ app.use(express.json({
     try {
       JSON.parse(buf);
     } catch (error) {
-      res.status(400).json({ error: 'Invalid JSON format' });
+      const errorResponse = createErrorResponse(400, 'Invalid JSON format');
+      res.status(errorResponse.error.code).json(errorResponse);
     }
   }
 }));
@@ -26,7 +28,7 @@ app.use('/bids', bids);
 app.use('/lots', lots);
 
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not Found' });
+  res.status(404).json(createErrorResponse(404, 'Not Found'));
 });
 
 app.listen(PORT, () => {
