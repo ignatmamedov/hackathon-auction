@@ -53,7 +53,7 @@ db.lots.push(
             db.languages[0].id
         ),
         "2024-12-12T12:00:00",
-        "2024-12-14T12:00:00",
+        "2025-02-14T12:00:00",
         1000
     ),
 
@@ -68,7 +68,7 @@ db.lots.push(
             db.languages[1].id
         ),
         "2024-12-12T12:00:00",
-        "2024-12-14T12:00:00",
+        "2025-02-14T12:00:00",
         1000
     ),
 
@@ -83,7 +83,22 @@ db.lots.push(
             db.languages[2].id
         ),
         "2024-12-12T12:00:00",
-        "2024-12-14T12:00:00",
+        "2025-02-14T12:00:00",
+        1000
+    ),
+
+    new Lot(
+        "6b70425a-d0ab-4f4c-a091-1d0356e7bc41",
+        new Project(
+            "Name3",
+            "Description3",
+            "someurl3",
+            db.domains[2].id,
+            db.licenses[2].id,
+            db.languages[2].id
+        ),
+        "2024-12-12T12:00:00",
+        "2024-12-12T13:00:00",
         1000
     ),
 )
@@ -106,8 +121,8 @@ db.bids.push(
     new Bid(
         "f5f867ef-041f-491d-b9d3-57fdc740fc96",
         "2024-12-12T12:10:00",
-        db.lots[2].id,
-        db.users[2].id,
+        db.lots[1].id,
+        db.users[1].id,
         1001
     ),
 )

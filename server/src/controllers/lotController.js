@@ -63,19 +63,29 @@ export const updateLot = (req, res) => {
 
         if (!lot) throw createErrorResponse(404, `Lot with id ${id} not found`);
 
-        const partialLotSchema = lotSchema.partial();
+        const partialLotSchema = lotSchema.deepPartial();
         const updatedData = partialLotSchema.parse(req.body);
 
-        if (updatedData.item) {
-            isCategoryExist(updatedData.item);
+        const mergedData = {
+            ...lot,
+            ...updatedData,
+            item: {
+                ...lot.item,
+                ...updatedData.item
+            }
+        };
+
+        if (mergedData.item) {
+            isCategoryExist(mergedData.item);
         }
 
-        const updatedLot = connector.update('lots', id, updatedData);
+        const updatedLot = connector.update('lots', id, mergedData);
         res.status(200).json({
             message: 'Lot updated successfully',
             lot: updatedLot
         });
     } catch (error) {
+        console.log(res, error);
         handleError(res, error);
     }
 };

@@ -13,16 +13,17 @@ const api = express.Router();
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({
-  verify: (req, res, buf, encoding) => {
-    try {
-      JSON.parse(buf);
-    } catch (error) {
+app.use((req, res, next) => {
+  express.json()(req, res, (err) => {
+    if (err) {
       const errorResponse = createErrorResponse(400, 'Invalid JSON format');
-      res.status(errorResponse.error.code).json(errorResponse);
+      return res.status(errorResponse.error.code).json(errorResponse);
     }
-  }
-}));
+    next();
+  });
+});
+
+app.use(express.urlencoded({ extended: true }));
 
 api.use('/auth', auth);
 api.use('/categories', categories);

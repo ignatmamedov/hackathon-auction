@@ -1,12 +1,10 @@
-###
 ### Register a new user successfully /api/auth - 201
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth
 Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "newuser@example.com",
+  "email": "test@registration.com",
   "password": "Password123!"
 }
 
@@ -14,19 +12,16 @@ Accept: application/json
     client.test("User created successfully", function () {
         client.assert(response.status === 201, "Response is not 201");
         client.assert(response.body.token != null, "Token not returned");
-        client.global.set("bidder_token", response.body.token);
     });
 %}
 
-###
 ### Try to create a user with the same email again /api/auth - 409
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth
 Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "newuser@example.com",
+  "email": "test@registration.com",
   "password": "AnotherPassword123!"
 }
 
@@ -38,9 +33,7 @@ Accept: application/json
     });
 %}
 
-###
 ### Register user with invalid email /api/auth - 400
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth
 Content-Type: application/json
 Accept: application/json
@@ -58,9 +51,7 @@ Accept: application/json
     });
 %}
 
-###
 ### Register user with short password /api/auth - 400
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth
 Content-Type: application/json
 Accept: application/json
@@ -78,15 +69,30 @@ Accept: application/json
     });
 %}
 
-###
-### Login with correct credentials /api/auth/tokens - 200
-###
+### Register a new user with invalid JSON format /api/auth - 400
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "badjson@example.com"
+  "password": "BadJsonPass"
+}
+> {%
+    client.test("Invalid JSON format error on registration", function () {
+        client.assert(response.status === 400, "Response is not 400");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/Invalid JSON format/i), "No 'Invalid JSON format' message");
+    });
+%}
+
+### Login user1 with correct credentials /api/auth/tokens - 200
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
 Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "newuser@example.com",
+  "email": "user1@gmail.com",
   "password": "Password123!"
 }
 
@@ -94,13 +100,47 @@ Accept: application/json
     client.test("Login successful", function () {
         client.assert(response.status === 200, "Response is not 200");
         client.assert(response.body.token != null, "Token not returned");
-        client.global.set("login_token", response.body.token);
+        client.global.set("user1_token", response.body.token);
     });
 %}
 
-###
+### Login user2 with correct credentials /api/auth/tokens - 200
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "user2@gmail.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.test("Login successful", function () {
+        client.assert(response.status === 200, "Response is not 200");
+        client.assert(response.body.token != null, "Token not returned");
+        client.global.set("user2_token", response.body.token);
+    });
+%}
+
+### Login admin with correct credentials /api/auth/tokens - 200
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "Password123!"
+}
+
+> {%
+    client.test("Login successful", function () {
+        client.assert(response.status === 200, "Response is not 200");
+        client.assert(response.body.token != null, "Token not returned");
+        client.global.set("admin_token", response.body.token);
+    });
+%}
+
 ### Login user with invalid email /api/auth - 400
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
 Content-Type: application/json
 Accept: application/json
@@ -118,9 +158,7 @@ Accept: application/json
     });
 %}
 
-###
 ### Login user with short password /api/auth - 400
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
 Content-Type: application/json
 Accept: application/json
@@ -138,15 +176,13 @@ Accept: application/json
     });
 %}
 
-###
 ### Login with wrong password /api/auth/tokens - 401
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
 Content-Type: application/json
 Accept: application/json
 
 {
-  "email": "newuser@example.com",
+  "email": "user1@gmail.com",
   "password": "WrongPassword!"
 }
 
@@ -158,9 +194,7 @@ Accept: application/json
     });
 %}
 
-###
 ### Login with non-existing user /api/auth/tokens - 404
-###
 POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
 Content-Type: application/json
 Accept: application/json
@@ -175,5 +209,22 @@ Accept: application/json
         client.assert(response.status === 404, "Response is not 404");
         client.assert(response.body.error != null, "Error not returned");
         client.assert(response.body.error.message.match(/not found/i), "No 'not found' message");
+    });
+%}
+
+### Login user with invalid JSON format /api/auth/tokens - 400
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/auth/tokens
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "badjson@example.com"
+  "password": "BadJsonPass"
+}
+> {%
+    client.test("Invalid JSON format error on login", function () {
+        client.assert(response.status === 400, "Response is not 400");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/Invalid JSON format/i), "No 'Invalid JSON format' message");
     });
 %}
