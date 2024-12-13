@@ -101,6 +101,34 @@ Accept: application/json
     });
 %}
 
+### Create a lot with invalid JSON format /api/categories - 400
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "item": {
+    "name": "New Lot Item",
+    "description": "Brand new lot item for testing",
+    "imgUrl": "https://example.com/image.jpg",
+    "domainId": 1,
+    "licenseId": 2,
+    "languageId": 2
+  },
+  "start": "2024-12-20T08:00:00Z"
+  "end": "2024-12-25T20:00:00Z",
+  "minBid": 100
+}
+
+> {%
+    client.test("Invalid JSON format error on categories", function () {
+        client.assert(response.status === 400, "Response is not 400");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/Invalid JSON format/i), "No 'Invalid JSON format' message");
+    });
+%}
+
 ### Update a lot successfully /api/lots/:id - 200
 PATCH {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/d9db83b4-d974-4c30-88bd-0bff9aa7dd46
 Content-Type: application/json
