@@ -3,6 +3,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+/**
+ * Generates a JWT token for the given user.
+ *
+ * @param {object} user - The user object containing at least `id`, `email`, and `isAdmin`.
+ * @returns {string} A JWT token that expires in 1 hour.
+ */
 export const generateToken = (user) => {
     const payload = {
         id: user.id,
@@ -11,8 +17,11 @@ export const generateToken = (user) => {
     };
 
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-}
+};
 
+/**
+ * Verifies the JWT token found in the request's Authorization header.
+ */
 export const verifyToken = (req) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {

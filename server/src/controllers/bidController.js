@@ -5,6 +5,13 @@ import { handleError, createErrorResponse } from "../utils/errorHandler.js";
 
 const connector = new DBConnector();
 
+/**
+ * Retrieves a lot by its ID.
+ *
+ * @param {string} lotId - The ID of the lot to retrieve.
+ * @returns {object} The lot object.
+ * @throws {Error} If the lot is not found (404).
+ */
 const getLot = (lotId) => {
     const lot = connector.read('lots', lotId);
     if (!lot) {
@@ -13,6 +20,12 @@ const getLot = (lotId) => {
     return lot;
 };
 
+/**
+ * Checks if the given lot is still active (end time not passed).
+ *
+ * @param {object} lot - The lot object to check.
+ * @throws {Error} If the lot's auction has ended (400).
+ */
 const isLotActive = (lot) => {
     const now = new Date();
     if (new Date(lot.end) < now) {
@@ -20,6 +33,13 @@ const isLotActive = (lot) => {
     }
 };
 
+/**
+ * Checks if the user has already placed a bid on the given lot.
+ *
+ * @param {string} lotId - The ID of the lot.
+ * @param {string|number} userId - The ID of the user.
+ * @throws {Error} If the user has already bid on this lot (400).
+ */
 const isUserAlreadyBid = (lotId, userId) => {
     const existingBid = connector.readAll('bids').find(bid => bid.lotId === lotId && bid.userId === userId);
     if (existingBid) {
@@ -27,6 +47,14 @@ const isUserAlreadyBid = (lotId, userId) => {
     }
 };
 
+/**
+ * Checks if the provided bid amount is higher than the current highest bid or the minimum bid.
+ *
+ * @param {number} amount - The proposed bid amount.
+ * @param {string} lotId - The ID of the lot being bid on.
+ * @param {number} minBid - The minimum starting bid for the lot.
+ * @throws {Error} If the bid amount is not higher than the current highest bid (400).
+ */
 const isBidAmountValid = (amount, lotId, minBid) => {
     const lotBids = connector.readAll('bids').filter(bid => bid.lotId === lotId);
     const highestBid = lotBids.reduce((max, bid) => bid.amount > max ? bid.amount : max, minBid);
@@ -35,6 +63,17 @@ const isBidAmountValid = (amount, lotId, minBid) => {
     }
 };
 
+/**
+ * Creates a new bid for a given lot.
+ *
+ * Validates the request body against `bidSchema`, checks if the lot is active,
+ * ensures the user hasn't already bid, and verifies that the new bid is higher than
+ * the current highest bid. On success, responds with status 201 and the created bid.
+ *
+ * @param {Request} req - Express request object with `lotId` and `amount` in `req.body` and `req.user.id`.
+ * @param {Response} res - Express response object.
+ * @returns {void} Responds with JSON: { message: "Bid created successfully.", bid: <BidObject> }.
+ */
 export const createBid = (req, res) => {
     try {
         const { lotId, amount } = bidSchema.parse(req.body);
@@ -56,6 +95,13 @@ export const createBid = (req, res) => {
     }
 };
 
+/**
+ * Retrieves all bids made by the currently authenticated user.
+ *
+ * @param {Request} req - Express request object containing `req.user.id`.
+ * @param {Response} res - Express response object.
+ * @returns {void} Responds with status 200 and an array of bids belonging to the user.
+ */
 export const getUserBids = (req, res) => {
     try {
         const userId = req.user.id;

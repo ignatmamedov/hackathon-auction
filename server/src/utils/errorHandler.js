@@ -1,3 +1,10 @@
+/**
+ * Creates a structured error response object.
+ *
+ * @param {number} code - The HTTP status code.
+ * @param {string} message - The error message.
+ * @returns {object} An error response object of the form { error: { code, message } }.
+ */
 export const createErrorResponse = (code, message) => ({
     error: {
         code,
@@ -5,6 +12,12 @@ export const createErrorResponse = (code, message) => ({
     },
 });
 
+/**
+ * Handles and formats errors before sending a response.
+ * Recognizes various error types (Zod validation errors, custom errors with `error.code`,
+ * errors indicating a resource does not exist, and general internal errors),
+ * and responds with the appropriate HTTP status and message.
+ */
 export const handleError = (res, error) => {
     if (error.name === 'ZodError') {
         return res.status(400).json(createErrorResponse(400, error.errors[0].message));
@@ -23,7 +36,5 @@ export const handleError = (res, error) => {
     }
 
     console.error('Unhandled error:', error);
-
     res.status(500).json(createErrorResponse(500, 'Internal server error'));
 };
-

@@ -4,6 +4,12 @@ import { handleError, createErrorResponse } from "../utils/errorHandler.js";
 
 const connector = new DBConnector();
 
+/**
+ * Checks if the provided categories (domain, license, language) exist.
+ *
+ * @param {object} item - The item object containing domainId, licenseId, languageId.
+ * @throws {Error} If any of the provided category IDs do not exist.
+ */
 const isCategoryExist = (item) => {
     const domains = connector.readAll('domains').map(domain => domain.id);
     const licenses = connector.readAll('licenses').map(license => license.id);
@@ -22,6 +28,13 @@ const isCategoryExist = (item) => {
     }
 };
 
+/**
+ * Creates a new lot.
+ *
+ * @param {Request} req - Request object, lot data in `req.body`.
+ * @param {Response} res - Response object.
+ * @returns {void} Responds with the created lot.
+ */
 export const createLot = (req, res) => {
     try {
         const lotData = lotSchema.parse(req.body);
@@ -36,6 +49,13 @@ export const createLot = (req, res) => {
     }
 };
 
+/**
+ * Updates an existing lot.
+ *
+ * @param {Request} req - Request object, partial lot data in `req.body` and `id` in params.
+ * @param {Response} res - Response object.
+ * @returns {void} Responds with the updated lot.
+ */
 export const updateLot = (req, res) => {
     try {
         const { id } = req.params;
@@ -60,15 +80,29 @@ export const updateLot = (req, res) => {
     }
 };
 
+/**
+ * Retrieves all lots.
+ *
+ * @param {Request} req - Request object.
+ * @param {Response} res - Response object.
+ * @returns {void} Responds with an array of lots.
+ */
 export const getAllLots = (req, res) => {
     try {
-        let lots = connector.readAll('lots');
+        const lots = connector.readAll('lots');
         res.status(200).json(lots);
     } catch (error) {
         handleError(res, error);
     }
 };
 
+/**
+ * Retrieves a lot by its ID.
+ *
+ * @param {Request} req - Request object, `id` in params.
+ * @param {Response} res - Response object.
+ * @returns {void} Responds with the requested lot.
+ */
 export const getLotById = (req, res) => {
     try {
         const { id } = req.params;
@@ -80,6 +114,13 @@ export const getLotById = (req, res) => {
     }
 };
 
+/**
+ * Retrieves all bids associated with a given lot ID.
+ *
+ * @param {Request} req - Request object, `id` in params.
+ * @param {Response} res - Response object.
+ * @returns {void} Responds with an array of bids.
+ */
 export const getLotBids = (req, res) => {
     try {
         const { id } = req.params;
@@ -92,6 +133,13 @@ export const getLotBids = (req, res) => {
     }
 };
 
+/**
+ * Deletes a lot by its ID.
+ *
+ * @param {Request} req - Request object, `id` in params.
+ * @param {Response} res - Response object.
+ * @returns {void} Responds with a success message.
+ */
 export const deleteLot = (req, res) => {
     try {
         const { id } = req.params;

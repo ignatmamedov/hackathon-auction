@@ -6,43 +6,14 @@ import { handleError, createErrorResponse } from "../utils/errorHandler.js";
 
 const connector = new DBConnector();
 
-export const getAllUsers = (req, res) => {
-    try {
-        const users = connector.readAll('users');
-
-        if (users.length === 0) {
-            res.status(200).json([]);
-            return;
-        }
-
-        const formattedUsers = users.map(user => ({
-            id: user.id,
-            email: user.email,
-            isAdmin: user.isAdmin
-        }));
-
-        res.status(200).json(formattedUsers);
-    } catch (error) {
-        handleError(res, error);
-    }
-}
-
-export const getUserBids = (req, res) => {
-    try {
-        const userId = req.user.id;
-        const user = connector.read('users', userId);
-
-        if (!user) {
-            throw createErrorResponse(404, `User with id ${userId} not found`);
-        }
-
-        const userBids = connector.readAll('bids').filter(bid => bid.userId === user.id);
-        res.status(200).json(userBids);
-    } catch (error) {
-        handleError(res, error);
-    }
-}
-
+/**
+ * Creates a new user and returns a JWT token.
+ *
+ * @param {Request} req - The request object, containing `email` and `password` in `req.body`.
+ * @param {Response} res - The response object.
+ * @returns {void} Responds with status 201 and a JSON object containing a message and a token.
+ * @throws {Error} If the user already exists or if validation fails.
+ */
 export const createUser = (req, res) => {
     try {
         const { email, password } = userSchema.parse(req.body);
@@ -62,26 +33,15 @@ export const createUser = (req, res) => {
     } catch (error) {
         handleError(res, error);
     }
-}
+};
 
-export const deleteUser = (req, res) => {
-    try {
-        const userId = req.params.id;
-        const user = connector.read('users', userId);
-
-        if (!user) {
-            throw createErrorResponse(404, `User with id ${userId} not found`);
-        }
-
-        connector.delete('users', userId);
-
-        res.status(200).json({ message: `User with id ${userId} deleted successfully` });
-    } catch (error) {
-        handleError(res, error);
-    }
-}
-
+/**
+ * Retrieves a user by their email address.
+ *
+ * @param {string} email - The email to search for.
+ * @returns {object|null} The user object if found, otherwise null.
+ */
 export const getUserByEmail = (email) => {
     const users = connector.readAll('users');
     return users.find(user => user.email === email) || null;
-}
+};

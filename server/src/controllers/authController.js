@@ -4,6 +4,14 @@ import { getUserByEmail } from "./userController.js";
 import { userSchema } from "../validators/userValidator.js";
 import { handleError, createErrorResponse } from "../utils/errorHandler.js";
 
+/**
+ * Logs in a user and returns a JWT token on success.
+ *
+ * @param {Request} req - Express request, expects `email` and `password` in `req.body`.
+ * @param {Response} res - Express response.
+ * @returns {void} Responds with a JSON object: { message: "Login successful", token: "<JWT token>" } on success,
+ * or an error response on failure.
+ */
 export const loginUser = (req, res) => {
     try {
         const { email, password } = userSchema.parse(req.body);
