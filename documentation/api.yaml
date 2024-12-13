@@ -1,111 +1,87 @@
 openapi: 3.0.3
 info:
-  title: Auction Hackathon API
-  description: API for managing users, lots, bids, domains, licenses, and languages.
+  title: API Specification
   version: 1.0.0
-
 servers:
   - url: http://localhost:3000
-    description: Local development server
 
 paths:
-  /api/domains:
-    get:
-      summary: Get all domains
-      operationId: getDomains
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Domain'
-
-  /api/languages:
-    get:
-      summary: Get all languages
-      operationId: getLanguages
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Language'
-
-  /api/licenses:
-    get:
-      summary: Get all licenses
-      operationId: getLicenses
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/License'
-
-  /api/users:
-    get:
-      summary: Get all users
-      operationId: getUsers
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-
+  /api/auth:
     post:
-      summary: Create a new user
-      operationId: createUser
+      summary: Register a new user
+      description: Creates a new user account.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserInput'
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user3@example.com"
+                password:
+                  type: string
+                  minLength: 8
+                  example: "Password123!"
       responses:
         '201':
           description: User created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-
-  /api/users/bids:
-    get:
-      summary: Get all bids made by the current user
-      operationId: getUserBids
-      responses:
-        '200':
-          description: Successful response
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "user3@example.com"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5NThiN2IxLTRlNmYtNDM3MC1iNjVmLWFlMGNiYTVmZTU5OSIsImVtYWlsIjoidXNlckBzYW1wbGUuY29tIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTczNDEwNTMzOCwiZXhwIjoxNzM0MTA4OTM4fQ.l_ZeA7yy-DGsqtDQO2kUGbiB_LxvDokaofcUh7MN1L0"
+        '400':
+          description: Validation error
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Bid'
-
-  /api/tokens:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BadRequest:
+                  value:
+                    error:
+                      code: 400
+                      message: "Validation failed: Email format is invalid."
+        '409':
+          description: User with such email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Conflict:
+                  value:
+                    error:
+                      code: 409
+                      message: "User with given email already exists."
+  /api/auth/tokens:
     post:
-      summary: User login
-      operationId: loginUser
+      summary: Login to the system
+      description: Returns a JWT token upon successful authentication.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginInput'
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: "admin@gmail.com"
+                password:
+                  type: string
+                  example: "Password123!"
       responses:
         '200':
           description: Login successful
@@ -116,262 +92,683 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: "admin@gmail.com"
                   token:
                     type: string
-
-  /api/lots:
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5NThiN2IxLTRlNmYtNDM3MC1iNjVmLWFlMGNiYTVmZTU5OSIsImVtYWlsIjoidXNlckBzYW1wbGUuY29tIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTczNDEwNTMzOCwiZXhwIjoxNzM0MTA4OTM4fQ.l_ZeA7yy-DGsqtDQO2kUGbiB_LxvDokaofcUh7MN1L0"
+        '400':
+          description: Validation error (e.g. invalid email format)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BadRequest:
+                  value:
+                    error:
+                      code: 400
+                      message: "Invalid email format."
+        '401':
+          description: Invalid password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    error:
+                      code: 401
+                      message: "Invalid password."
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    error:
+                      code: 404
+                      message: "User not found."
+  /api/bids:
     get:
-      summary: Get all lots
-      operationId: getLots
+      summary: Get all bids of the current user
+      description: Returns all bids placed by the authenticated user.
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Lot'
-
-    post:
-      summary: Create a new lot
-      operationId: createLot
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LotInput'
-      responses:
-        '201':
-          description: Lot created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lot'
-
-  /api/lots/{id}:
-    get:
-      summary: Get lot by ID
-      operationId: getLotById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lot'
-
-    patch:
-      summary: Update a lot
-      operationId: updateLot
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LotInput'
-      responses:
-        '200':
-          description: Lot updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lot'
-
-    delete:
-      summary: Delete a lot
-      operationId: deleteLot
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lot deleted successfully
-
-  /api/lots/{id}/bids:
-    get:
-      summary: Get all bids for a lot
-      operationId: getLotBids
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
+          description: A list of user's bids
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Bid'
-
-  /api/lots/bids:
+              examples:
+                userBids:
+                  value:
+                    - id: "9a90f3eb-04ad-4a51-8960-5ff5e5c96f24"
+                      timestamp: "2024-12-12T12:10:00Z"
+                      lotId: "d9db83b4-d974-4c30-88bd-0bff9aa7dd46"
+                      userId: "1"
+                      amount: 1001
+                    - id: "37ffaac0-d66b-4c5b-84af-55f0808f24d6"
+                      timestamp: "2024-12-12T12:10:01Z"
+                      lotId: "d984e8cb-a11f-468b-a008-f698c21c463c"
+                      userId: "1"
+                      amount: 1002
+        '401':
+          description: Unauthorized (missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    error:
+                      code: 401
+                      message: "Unauthorized: Missing or invalid token."
     post:
       summary: Place a bid on a lot
-      operationId: placeBid
+      description: Place a new bid if the user is authenticated and not an admin.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BidInput'
+              type: object
+              required: [lotId, amount]
+              properties:
+                lotId:
+                  type: string
+                  example: "281ed63c-e3a9-476f-bed8-92b219444e79"
+                amount:
+                  type: number
+                  example: 1100
       responses:
         '201':
-          description: Bid placed successfully
+          description: Bid created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bid'
+                type: object
+                properties:
+                  message:
+                    type: string
+                  bid:
+                    $ref: '#/components/schemas/Bid'
+              examples:
+                success:
+                  value:
+                    message: "Bid created successfully."
+                    bid:
+                      id: "abc12345-6789-4abc-def0-111213141516"
+                      timestamp: "2024-12-12T12:11:00Z"
+                      lotId: "281ed63c-e3a9-476f-bed8-92b219444e79"
+                      userId: "2"
+                      amount: 1100
+        '400':
+          description: Bad request (validation errors, lot ended, already bid, bid too low)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                LotEnded:
+                  value:
+                    error:
+                      code: 400
+                      message: "Auction for this lot has ended."
+                AlreadyBid:
+                  value:
+                    error:
+                      code: 400
+                      message: "You have already placed a bid on this lot."
+        '401':
+          description: Unauthorized (no token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    error:
+                      code: 401
+                      message: "Token is missing or invalid."
+        '403':
+          description: Forbidden (Admin trying to bid or no bidder role)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    error:
+                      code: 403
+                      message: "Admins are not allowed to perform this action."
+        '404':
+          description: Lot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    error:
+                      code: 404
+                      message: "Lot with given ID not found."
+
+  /api/lots:
+    get:
+      summary: Get all lots
+      description: Returns all lots, supports filters and search.
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search term
+        - in: query
+          name: domainId
+          schema:
+            type: integer
+        - in: query
+          name: licenseId
+          schema:
+            type: integer
+        - in: query
+          name: languageId
+          schema:
+            type: integer
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of lots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lot'
+              examples:
+                lotsList:
+                  value:
+                    - id: "d9db83b4-d974-4c30-88bd-0bff9aa7dd46"
+                      item:
+                        name: "Name0"
+                        description: "Description0"
+                        imgUrl: "someurl0"
+                        domainId: 0
+                        licenseId: 0
+                        languageId: 0
+                      start: "2024-12-12T12:00:00Z"
+                      end: "2024-12-14T12:00:00Z"
+                      minBid: 1000
+                    - id: "d984e8cb-a11f-468b-a008-f698c21c463c"
+                      item:
+                        name: "Name1"
+                        description: "Description1"
+                        imgUrl: "someurl1"
+                        domainId: 1
+                        licenseId: 1
+                        languageId: 1
+                      start: "2024-12-12T12:00:00Z"
+                      end: "2024-12-14T12:00:00Z"
+                      minBid: 1000
+                    - id: "281ed63c-e3a9-476f-bed8-92b219444e79"
+                      item:
+                        name: "Name2"
+                        description: "Description2"
+                        imgUrl: "someurl2"
+                        domainId: 3
+                        licenseId: 2
+                        languageId: 2
+                      start: "2024-12-12T12:00:00Z"
+                      end: "2024-12-14T12:00:00Z"
+                      minBid: 1000
+    post:
+      summary: Create a new lot (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lot'
+      responses:
+        '201':
+          description: Lot created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  lot:
+                    $ref: '#/components/schemas/Lot'
+        '400':
+          description: Validation error or category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                InvalidCategory:
+                  value:
+                    error:
+                      code: 400
+                      message: "Domain with id 999 does not exist"
+        '401':
+          description: Unauthorized (token missing or invalid)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    error:
+                      code: 401
+                      message: "Missing or invalid token."
+        '403':
+          description: Forbidden (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    error:
+                      code: 403
+                      message: "Admin access required."
+
+  /api/lots/{id}:
+    get:
+      summary: Get a lot by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lot details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+              examples:
+                lotDetails:
+                  value:
+                    id: "d9db83b4-d974-4c30-88bd-0bff9aa7dd46"
+                    item:
+                      name: "Name0"
+                      description: "Description0"
+                      imgUrl: "someurl0"
+                      domainId: 0
+                      licenseId: 0
+                      languageId: 0
+                    start: "2024-12-12T12:00:00Z"
+                    end: "2024-12-14T12:00:00Z"
+                    minBid: 1000
+        '404':
+          description: Lot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    error:
+                      code: 404
+                      message: "Lot with given ID not found."
+    patch:
+      summary: Update a lot (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                item:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    description: { type: string }
+                    imgUrl: { type: string }
+                    domainId: { type: number }
+                    licenseId: { type: number }
+                    languageId: { type: number }
+                start: { type: string, format: date-time }
+                end: { type: string, format: date-time }
+                minBid: { type: number }
+      responses:
+        '200':
+          description: Lot updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  lot:
+                    $ref: '#/components/schemas/Lot'
+        '400':
+          description: Validation error or category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                InvalidCategory:
+                  value:
+                    error:
+                      code: 400
+                      message: "License with id 999 does not exist"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    error:
+                      code: 401
+                      message: "Missing or invalid token."
+        '403':
+          description: Forbidden (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    error:
+                      code: 403
+                      message: "Admin access required."
+        '404':
+          description: Lot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    error:
+                      code: 404
+                      message: "Lot with given ID not found."
+    delete:
+      summary: Delete a lot (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lot deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Unauthorized:
+                  value:
+                    error:
+                      code: 401
+                      message: "Missing or invalid token."
+        '403':
+          description: Forbidden (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    error:
+                      code: 403
+                      message: "Admin access required."
+        '404':
+          description: Lot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    error:
+                      code: 404
+                      message: "Lot with given ID not found."
+
+  /api/lots/{id}/bids:
+    get:
+      summary: Get all bids for a specific lot
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of bids for the lot
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+              examples:
+                lotBids:
+                  value:
+                    - id: "9a90f3eb-04ad-4a51-8960-5ff5e5c96f24"
+                      timestamp: "2024-12-12T12:10:00Z"
+                      lotId: "d9db83b4-d974-4c30-88bd-0bff9aa7dd46"
+                      userId: "1"
+                      amount: 1001
+        '404':
+          description: Lot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NotFound:
+                  value:
+                    error:
+                      code: 404
+                      message: "Lot with given ID not found."
+
+  /api/categories:
+    get:
+      summary: Get all categories (domains, licenses, languages)
+      responses:
+        '200':
+          description: Categories data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domains:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Domain'
+                  licenses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/License'
+                  languages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Language'
+              examples:
+                categoriesExample:
+                  value:
+                    domains:
+                      - id: 0
+                        name: "AI"
+                      - id: 1
+                        name: "Cloud Migration"
+                      - id: 3
+                        name: "Android development"
+                    licenses:
+                      - id: 0
+                        type: "MIT"
+                      - id: 1
+                        type: "Apache-2.0"
+                      - id: 2
+                        type: "BSD-2-Clause"
+                    languages:
+                      - id: 0
+                        name: "Python"
+                      - id: 1
+                        name: "Java"
+                      - id: 2
+                        name: "JavaScript"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
-    Domain:
+    ErrorResponse:
       type: object
       properties:
-        id:
-          type: integer
-        name:
-          type: string
-
-    Language:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-
-    License:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-        isAdmin:
-          type: boolean
-
-    UserInput:
-      type: object
-      properties:
-        email:
-          type: string
-        password:
-          type: string
-        isAdmin:
-          type: boolean
-
-    LoginInput:
-      type: object
-      properties:
-        email:
-          type: string
-        password:
-          type: string
-
-    Lot:
-      type: object
-      properties:
-        id:
-          type: string
-        item:
-          $ref: '#/components/schemas/Project'
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-
-    LotInput:
-      type: object
-      properties:
-        item:
-          $ref: '#/components/schemas/ProjectInput'
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-
-    Project:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        imgUrl:
-          type: string
-        domainId:
-          type: integer
-        licenseId:
-          type: integer
-        languageId:
-          type: integer
-
-    ProjectInput:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        imgUrl:
-          type: string
-        domainId:
-          type: integer
-        licenseId:
-          type: integer
-        languageId:
-          type: integer
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: "HTTP status code representing the error"
+            message:
+              type: string
+              description: "Error message describing what went wrong"
 
     Bid:
       type: object
       properties:
         id:
           type: string
+        timestamp:
+          type: string
+          format: date-time
+        lotId:
+          type: string
         userId:
           type: string
-        lotId:
-          type: string
         amount:
           type: number
 
-    BidInput:
+    Lot:
+      type: object
+      required:
+        - item
+        - start
+        - end
+        - minBid
+      properties:
+        id:
+          type: string
+        item:
+          type: object
+          required:
+            - name
+            - description
+            - imgUrl
+            - domainId
+            - licenseId
+            - languageId
+          properties:
+            name: { type: string }
+            description: { type: string }
+            imgUrl: { type: string }
+            domainId: { type: number }
+            licenseId: { type: number }
+            languageId: { type: number }
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        minBid:
+          type: number
+
+    Domain:
       type: object
       properties:
-        lotId:
-          type: string
-        amount:
-          type: number
+        id: { type: number }
+        name: { type: string }
 
-  
+    License:
+      type: object
+      properties:
+        id: { type: number }
+        type: { type: string }
+
+    Language:
+      type: object
+      properties:
+        id: { type: number }
+        name: { type: string }

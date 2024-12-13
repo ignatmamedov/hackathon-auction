@@ -9,6 +9,8 @@ import {createErrorResponse} from "./utils/errorHandler.js";
 dotenv.config();
 
 const app = express();
+const api = express.Router();
+
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json({
@@ -22,10 +24,11 @@ app.use(express.json({
   }
 }));
 
-app.use('/auth', auth);
-app.use('/categories', categories);
-app.use('/bids', bids);
-app.use('/lots', lots);
+api.use('/auth', auth);
+api.use('/categories', categories);
+api.use('/bids', bids);
+api.use('/lots', lots);
+app.use('/api', api);
 
 app.use((req, res) => {
   res.status(404).json(createErrorResponse(404, 'Not Found'));
