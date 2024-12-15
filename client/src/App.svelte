@@ -8,15 +8,22 @@
   import Login from "./pages/Login.svelte";
   import SignUp from "./pages/SignUp.svelte";
   import UserDashboard from "./pages/UserDashboard.svelte";
-  import Lots from "./pages/Lots.svelte";
+  import Home from "./pages/Home.svelte";
+  import Lot from "./pages/Lot.svelte";
 
   let page;
   let params;
   let currentRoute;
 
   router('/', (ctx) => {
-    page = Lots;
+    page = Home;
     currentRoute = ctx.pathname;
+  });
+
+  router('/lots/:id', (ctx) => {
+    page = Lot;
+    currentRoute = ctx.pathname;
+    params = ctx.params;
   });
 
   router('/login', (ctx) => {

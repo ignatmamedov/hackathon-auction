@@ -13,7 +13,7 @@
     export let status;
     export let onDetailsClick;
     export let onDeleteClick;
-    export let onEditClick; // Проп для Edit
+    export let onEditClick;
     export let isAdmin = false;
     export let showDetailsButton;
 </script>

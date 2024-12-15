@@ -2,6 +2,7 @@ import { DBConnector } from "../database/connector.js";
 import { Bid } from "../models/Bid.js";
 import { bidSchema } from "../validators/bidValidator.js";
 import { handleError, createErrorResponse } from "../utils/errorHandler.js";
+import {emitter} from "../utils/eventEmitter.js";
 
 const connector = new DBConnector();
 
@@ -93,6 +94,8 @@ export const createBid = (req, res) => {
         const savedBid = connector.create('bids', newBid);
 
         updateMinBidForLot(lotId, amount);
+
+        emitter.emit('bid', savedBid);
 
         res.status(201).json({
             message: "Bid created successfully.",
