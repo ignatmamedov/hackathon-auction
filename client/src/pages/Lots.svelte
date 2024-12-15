@@ -13,6 +13,11 @@
     let currentUser = null;
     let intervalId;
     let editingLot = null;
+    let fields = [];
+
+    const formatDateTimeLocal = (date) => new Date(date).toISOString().slice(0, 16);
+
+
 
     const fetchCategories = async () => {
         try {
@@ -85,20 +90,40 @@
             console.error('Lot or its item is undefined', lot);
             return;
         }
-        editingLot = {
-            id: lot.id,
-            item: {
-                name: lot.item?.name ?? '',
-                description: lot.item?.description ?? '',
-                imgUrl: lot.item?.imgUrl ?? '',
-                domainId: lot.item?.domainId ?? null,
-                licenseId: lot.item?.licenseId ?? null,
-                languageId: lot.item?.languageId ?? null
+        editingLot = lot;
+        fields = [
+            { id: 'name', type: 'text', value: lot.item.name, label: 'Name', required: true },
+            { id: 'description', type: 'text', value: lot.item.description, label: 'Description', required: true },
+            { id: 'imgUrl', type: 'url', value: lot.item.imgUrl, label: 'Image URL', required: true },
+            {
+                id: 'domainId',
+                type: 'select',
+                value: lot.item.domainId,
+                label: 'Domain',
+                options: categories.domains.map(d => ({ value: d.id, label: d.name })),
+                required: true
             },
-            start: lot.start ?? '',
-            end: lot.end ?? '',
-            minBid: lot.minBid ?? 0
-        };
+            {
+                id: 'licenseId',
+                type: 'select',
+                value: lot.item.licenseId,
+                label: 'License',
+                options: categories.licenses.map(l => ({ value: l.id, label: l.type })),
+                required: true
+            },
+            {
+                id: 'languageId',
+                type: 'select',
+                value: lot.item.languageId,
+                label: 'Language',
+                options: categories.languages.map(l => ({ value: l.id, label: l.name })),
+                required: true
+            },
+            { id: 'start', type: 'datetime-local', value: formatDateTimeLocal(lot.start), label: 'Start Date', required: true },
+            { id: 'end', type: 'datetime-local', value: formatDateTimeLocal(lot.end), label: 'End Date', required: true },
+            { id: 'minBid', type: 'number', value: lot.minBid, label: 'Min Bid', required: true }
+        ];
+
     };
 
     const closeEditModal = () => {
@@ -108,11 +133,19 @@
     const saveLotChanges = async () => {
         try {
             const payload = {
-                item: editingLot.item,
-                start: new Date(editingLot.start).toISOString(),
-                end: new Date(editingLot.end).toISOString(),
-                minBid: editingLot.minBid
+                item: {
+                    name: fields.find(f => f.id === 'name').value,
+                    description: fields.find(f => f.id === 'description').value,
+                    imgUrl: fields.find(f => f.id === 'imgUrl').value,
+                    domainId: Number(fields.find(f => f.id === 'domainId').value),
+                    licenseId: Number(fields.find(f => f.id === 'licenseId').value),
+                    languageId: Number(fields.find(f => f.id === 'languageId').value)
+                },
+                start: new Date(fields.find(f => f.id === 'start').value).toISOString(),
+                end: new Date(fields.find(f => f.id === 'end').value).toISOString(),
+                minBid: Number(fields.find(f => f.id === 'minBid').value)
             };
+
             await fetch(`http://localhost:3000/api/lots/${editingLot.id}`, {
                 method: 'PATCH',
                 headers: {
@@ -176,36 +209,11 @@
         <div class="modal">
             <div class="modal-content">
                 <button class="close-button" on:click={closeEditModal}>X</button>
-                <form on:submit|preventDefault={saveLotChanges}>
-                    <label for="name">Name</label>
-                    <input id="name" type="text" bind:value={editingLot.item.name} required/>
-
-                    <label for="description">Description</label>
-                    <input id="description" type="text" bind:value={editingLot.item.description} required/>
-
-                    <label for="imgUrl">Image URL</label>
-                    <input id="imgUrl" type="url" bind:value={editingLot.item.imgUrl} required/>
-
-                    <label for="domainId">Domain ID</label>
-                    <input id="domainId" type="number" bind:value={editingLot.item.domainId} required/>
-
-                    <label for="licenseId">License ID</label>
-                    <input id="licenseId" type="number" bind:value={editingLot.item.licenseId} required/>
-
-                    <label for="languageId">Language ID</label>
-                    <input id="languageId" type="number" bind:value={editingLot.item.languageId} required/>
-
-                    <label for="start">Start Date</label>
-                    <input id="start" type="datetime-local" bind:value={editingLot.start} required/>
-
-                    <label for="end">End Date</label>
-                    <input id="end" type="datetime-local" bind:value={editingLot.end} required/>
-
-                    <label for="minBid">Min Bid</label>
-                    <input id="minBid" type="number" bind:value={editingLot.minBid} required/>
-
-                    <button type="submit">Save Changes</button>
-                </form>
+                <EditForm
+                        bind:fields
+                        onSubmit={saveLotChanges}
+                        buttonText="Save Changes"
+                />
             </div>
         </div>
     {/if}
