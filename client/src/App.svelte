@@ -5,6 +5,8 @@
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
   import Header from "./components/Header.svelte";
+  import Login from "./pages/Login.svelte";
+  import SignUp from "./pages/SignUp.svelte";
 
   let page;
   let params;
@@ -16,6 +18,17 @@
   });
   router('/about', (ctx) => {
     page = About;
+    currentRoute = ctx.pathname;
+    params = ctx;
+  });
+  router('/login', (ctx) => {
+      page = Login;
+      currentRoute = ctx.pathname;
+      params = ctx;
+  });
+
+  router('/sign-up', (ctx) => {
+    page = SignUp;
     currentRoute = ctx.pathname;
     params = ctx;
   });

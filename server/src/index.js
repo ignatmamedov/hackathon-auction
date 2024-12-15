@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import auth from './routes/auth.js';
 import bids from "./routes/bids.js";
@@ -12,6 +13,8 @@ const app = express();
 const api = express.Router();
 
 const PORT = process.env.PORT || 3000;
+
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use((req, res, next) => {
   express.json()(req, res, (err) => {

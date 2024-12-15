@@ -1,19 +1,31 @@
 <script>
-    export let active;
+    import { isLoggedIn, user, logout } from '../utils/auth';
+    import page from 'page';
+
+    $: userEmail = $user?.email;
+    $: isAdmin = $user?.isAdmin;
+
+    const handleLogout = () => {
+        logout();
+        page('/login');
+    };
 </script>
+
 <nav>
-    <ul>
-        <li><a class:active={active === "/"} href="/">Home</a></li>
-        <li><a class:active={active === "/about"} href="/about">About</a></li>
-    </ul>
+    <a href="/">Home</a>
+
+    {#if $isLoggedIn}
+        <span>Welcome, {userEmail}</span>
+
+        {#if isAdmin}
+            <a href="/admin-dashboard">Admin Dashboard</a>
+        {:else}
+            <a href="/my-dashboard">My Dashboard</a>
+        {/if}
+
+        <button on:click={handleLogout}>Logout</button>
+    {:else}
+        <a href="/login">Login</a>
+        <a href="/sign-up">Sign Up</a>
+    {/if}
 </nav>
-
-<style>
-    ul {
-        list-style-type: none;
-    }
-
-    a.active {
-        font-weight: bold;
-    }
-</style>
