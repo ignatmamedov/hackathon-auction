@@ -87,11 +87,17 @@
         }
         editingLot = {
             id: lot.id,
-            minBid: lot.minBid ?? 0, // Устанавливаем значение по умолчанию, если lot.minBid не определен
             item: {
-                name: lot.item?.name ?? '', // Безопасный доступ с fallback
-                description: lot.item?.description ?? '' // Безопасный доступ с fallback
-            }
+                name: lot.item?.name ?? '',
+                description: lot.item?.description ?? '',
+                imgUrl: lot.item?.imgUrl ?? '',
+                domainId: lot.item?.domainId ?? null,
+                licenseId: lot.item?.licenseId ?? null,
+                languageId: lot.item?.languageId ?? null
+            },
+            start: lot.start ?? '',
+            end: lot.end ?? '',
+            minBid: lot.minBid ?? 0
         };
     };
 
@@ -101,13 +107,19 @@
 
     const saveLotChanges = async () => {
         try {
+            const payload = {
+                item: editingLot.item,
+                start: new Date(editingLot.start).toISOString(),
+                end: new Date(editingLot.end).toISOString(),
+                minBid: editingLot.minBid
+            };
             await fetch(`http://localhost:3000/api/lots/${editingLot.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify(editingLot)
+                body: JSON.stringify(payload)
             });
             editingLot = null;
             await fetchLots();
@@ -166,31 +178,31 @@
                 <button class="close-button" on:click={closeEditModal}>X</button>
                 <form on:submit|preventDefault={saveLotChanges}>
                     <label for="name">Name</label>
-                    <input
-                            id="name"
-                            type="text"
-                            bind:value={editingLot.item.name}
-                            placeholder="Name"
-                            required
-                    />
+                    <input id="name" type="text" bind:value={editingLot.item.name} required/>
 
                     <label for="description">Description</label>
-                    <input
-                            id="description"
-                            type="text"
-                            bind:value={editingLot.item.description}
-                            placeholder="Description"
-                            required
-                    />
+                    <input id="description" type="text" bind:value={editingLot.item.description} required/>
+
+                    <label for="imgUrl">Image URL</label>
+                    <input id="imgUrl" type="url" bind:value={editingLot.item.imgUrl} required/>
+
+                    <label for="domainId">Domain ID</label>
+                    <input id="domainId" type="number" bind:value={editingLot.item.domainId} required/>
+
+                    <label for="licenseId">License ID</label>
+                    <input id="licenseId" type="number" bind:value={editingLot.item.licenseId} required/>
+
+                    <label for="languageId">Language ID</label>
+                    <input id="languageId" type="number" bind:value={editingLot.item.languageId} required/>
+
+                    <label for="start">Start Date</label>
+                    <input id="start" type="datetime-local" bind:value={editingLot.start} required/>
+
+                    <label for="end">End Date</label>
+                    <input id="end" type="datetime-local" bind:value={editingLot.end} required/>
 
                     <label for="minBid">Min Bid</label>
-                    <input
-                            id="minBid"
-                            type="number"
-                            bind:value={editingLot.minBid}
-                            placeholder="Min Bid"
-                            required
-                    />
+                    <input id="minBid" type="number" bind:value={editingLot.minBid} required/>
 
                     <button type="submit">Save Changes</button>
                 </form>
