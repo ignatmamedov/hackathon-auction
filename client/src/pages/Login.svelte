@@ -19,7 +19,6 @@
 
         try {
             const validatedData = loginSchema.parse({email, password});
-
             const response = await fetch(`http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}/api/auth/tokens`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},

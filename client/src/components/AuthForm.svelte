@@ -1,6 +1,6 @@
 <script>
     import InputField from './InputField.svelte';
-    import SubmitButton from './SubmitButton.svelte';
+    import Button from './Button.svelte';
     import ErrorMessage from './ErrorMessage.svelte';
 
     export let onSubmit;
@@ -16,7 +16,6 @@
 
 <form on:submit={handleSubmit}>
     <ErrorMessage message={errorMessage} />
-
     {#each fields as field}
         {#if field.type === 'select'}
             <label for={field.id}>{field.label}</label>
@@ -36,6 +35,5 @@
             />
         {/if}
     {/each}
-
-    <SubmitButton text={buttonText} />
+    <Button text={buttonText} type="submit" />
 </form>
