@@ -1,7 +1,7 @@
 <script>
     import {onMount, onDestroy} from 'svelte';
     import SummaryBar from '../components/dashboard/SummaryBar.svelte';
-    import Section from '../components/dashboard/Section.svelte';
+    import LotList from '../components/dashboard/LotList.svelte';
     import {calculateTimeLeft, mapCategories} from '../utils/utils.js';
     import {user} from '../utils/auth';
 
@@ -98,11 +98,21 @@
 </script>
 
 <main>
-    <SummaryBar totalBids={bids.length} totalPayment={totalPayment} userEmail={userEmail}/>
+    <SummaryBar totalBids={bids.length} totalPayment={totalPayment} userEmail={userEmail} />
 
     <div class="content">
-        <Section title="Won Lots" lots={wonLots} emptyMessage="You have no won lots."/>
-        <Section title="Active Bids" lots={activeBids} emptyMessage="You have no active bids."/>
+        <LotList
+                title="Won Lots"
+                lots={wonLots}
+                emptyMessage="You have no won lots."
+                onDetailsClick={(id) => window.location.href = `/lots/${id}`}
+        />
+        <LotList
+                title="Active Bids"
+                lots={activeBids}
+                emptyMessage="You have no active bids."
+                onDetailsClick={(id) => window.location.href = `/lots/${id}`}
+        />
     </div>
 </main>
 

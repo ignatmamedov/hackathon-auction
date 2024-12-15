@@ -99,12 +99,62 @@ export const updateLot = (req, res) => {
  */
 export const getAllLots = (req, res) => {
     try {
-        const lots = connector.readAll('lots');
+        const { query, domainId, licenseId, languageId, minPrice, maxPrice, sortBy, order } = req.query;
+
+        let lots = connector.readAll('lots');
+
+        if (query) {
+            const lowerQuery = query.toLowerCase();
+            lots = lots.filter(lot =>
+                lot.item.name.toLowerCase().includes(lowerQuery) ||
+                lot.item.description.toLowerCase().includes(lowerQuery)
+            );
+        }
+
+        if (domainId) {
+            const domainIds = Array.isArray(domainId) ? domainId : [domainId];
+            lots = lots.filter(lot => domainIds.includes(String(lot.item.domainId)));
+        }
+
+        if (licenseId) {
+            const licenseIds = Array.isArray(licenseId) ? licenseId : [licenseId];
+            lots = lots.filter(lot => licenseIds.includes(String(lot.item.licenseId)));
+        }
+
+        if (languageId) {
+            const languageIds = Array.isArray(languageId) ? languageId : [languageId];
+            lots = lots.filter(lot => languageIds.includes(String(lot.item.languageId)));
+        }
+        if (minPrice) {
+            lots = lots.filter(lot => lot.minBid >= parseFloat(minPrice));
+        }
+
+        if (maxPrice) {
+            lots = lots.filter(lot => lot.minBid <= parseFloat(maxPrice));
+        }
+
+        if (sortBy) {
+            lots = lots.sort((a, b) => {
+                let valueA = a[sortBy];
+                let valueB = b[sortBy];
+
+                if (typeof valueA === 'string') {
+                    valueA = valueA.toLowerCase();
+                    valueB = valueB.toLowerCase();
+                }
+
+                if (valueA < valueB) return order === 'desc' ? 1 : -1;
+                if (valueA > valueB) return order === 'desc' ? -1 : 1;
+                return 0;
+            });
+        }
+
         res.status(200).json(lots);
     } catch (error) {
         handleError(res, error);
     }
 };
+
 
 /**
  * Retrieves a lot by its ID.

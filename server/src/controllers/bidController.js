@@ -64,15 +64,21 @@ const isBidAmountValid = (amount, lotId, minBid) => {
 };
 
 /**
+ * Updates the minBid of a lot if the new bid amount is higher.
+ */
+const updateMinBidForLot = (lotId, newBidAmount) => {
+    const lot = getLot(lotId);
+    if (newBidAmount > lot.minBid) {
+        const updatedLot = {
+            ...lot,
+            minBid: newBidAmount
+        };
+        connector.update('lots', lotId, updatedLot);
+    }
+};
+
+/**
  * Creates a new bid for a given lot.
- *
- * Validates the request body against `bidSchema`, checks if the lot is active,
- * ensures the user hasn't already bid, and verifies that the new bid is higher than
- * the current highest bid. On success, responds with status 201 and the created bid.
- *
- * @param {Request} req - Express request object with `lotId` and `amount` in `req.body` and `req.user.id`.
- * @param {Response} res - Express response object.
- * @returns {void} Responds with JSON: { message: "Bid created successfully.", bid: <BidObject> }.
  */
 export const createBid = (req, res) => {
     try {
@@ -85,6 +91,8 @@ export const createBid = (req, res) => {
 
         const newBid = new Bid(undefined, new Date().toISOString(), lotId, req.user.id, amount);
         const savedBid = connector.create('bids', newBid);
+
+        updateMinBidForLot(lotId, amount);
 
         res.status(201).json({
             message: "Bid created successfully.",

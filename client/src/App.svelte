@@ -4,26 +4,21 @@
 
   import { isLoggedIn } from './utils/auth';
 
-  import Home from "./pages/Home.svelte";
-  import About from "./pages/About.svelte";
   import Header from "./components/Header.svelte";
   import Login from "./pages/Login.svelte";
   import SignUp from "./pages/SignUp.svelte";
   import UserDashboard from "./pages/UserDashboard.svelte";
+  import Lots from "./pages/Lots.svelte";
 
   let page;
   let params;
   let currentRoute;
 
   router('/', (ctx) => {
-    page = Home;
+    page = Lots;
     currentRoute = ctx.pathname;
   });
-  router('/about', (ctx) => {
-    page = About;
-    currentRoute = ctx.pathname;
-    params = ctx;
-  });
+
   router('/login', (ctx) => {
     if ($isLoggedIn) {
       return router.redirect('/');

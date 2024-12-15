@@ -1,10 +1,13 @@
 <script>
-    import LotCard from "../LotCard.svelte";
+    import LotCard from '../LotCard.svelte';
 
     export let title;
     export let lots;
     export let emptyMessage;
     export let onDetailsClick;
+    export let onDeleteClick;
+    export let onEditClick;
+    export let isAdmin = false;
 </script>
 
 <section>
@@ -12,19 +15,23 @@
     {#if lots.length > 0}
         {#each lots as lot}
             <LotCard
+                    {lot}
                     imgUrl={lot.item.imgUrl}
                     name={lot.item.name}
                     description={lot.item.description}
                     endDate={lot.end}
-                    userBid={lot.userBid}
-                    topBid={lot.topBid}
                     timeLeft={lot.timeLeft}
+                    minBid={lot.minBid}
+                    userBid={lot.userBid}
                     domain={lot.category.domain}
                     license={lot.category.license}
                     language={lot.category.language}
                     status={title === 'Won Lots' ? 'win' : ''}
                     showDetailsButton={true}
                     onDetailsClick={() => onDetailsClick(lot.id)}
+                    onDeleteClick={() => onDeleteClick(lot.id)}
+                    onEditClick={() => onEditClick(lot)}
+                    isAdmin={isAdmin}
             />
         {/each}
     {:else}
