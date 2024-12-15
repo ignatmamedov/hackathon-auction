@@ -1,23 +1,21 @@
 <script>
-    import { onMount } from 'svelte';
+    import {onMount} from 'svelte';
     import LotList from '../components/dashboard/LotList.svelte';
     import FilterBar from '../components/FilterBar.svelte';
     import EditForm from '../components/AuthForm.svelte';
-    import { calculateTimeLeft, mapCategories } from '../utils/utils.js';
-    import { user } from '../utils/auth';
+    import {calculateTimeLeft, mapCategories} from '../utils/utils.js';
+    import {user} from '../utils/auth';
 
     let lots = [];
-    let categories = { domains: [], licenses: [], languages: [] };
+    let categories = {domains: [], licenses: [], languages: []};
     let searchQuery = '';
-    let filters = { domainIds: [], licenseIds: [], languageIds: [] };
+    let filters = {domainIds: [], licenseIds: [], languageIds: []};
     let currentUser = null;
     let intervalId;
     let editingLot = null;
     let fields = [];
 
     const formatDateTimeLocal = (date) => new Date(date).toISOString().slice(0, 16);
-
-
 
     const fetchCategories = async () => {
         try {
@@ -65,7 +63,7 @@
     };
 
     const handleFilterChange = async (newFilters) => {
-        filters = { ...newFilters };
+        filters = {...newFilters};
         await fetchLots();
     };
 
@@ -77,7 +75,7 @@
         try {
             await fetch(`http://localhost:3000/api/lots/${id}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
             });
             await fetchLots();
         } catch (error) {
@@ -92,15 +90,15 @@
         }
         editingLot = lot;
         fields = [
-            { id: 'name', type: 'text', value: lot.item.name, label: 'Name', required: true },
-            { id: 'description', type: 'text', value: lot.item.description, label: 'Description', required: true },
-            { id: 'imgUrl', type: 'url', value: lot.item.imgUrl, label: 'Image URL', required: true },
+            {id: 'name', type: 'text', value: lot.item.name, label: 'Name', required: true},
+            {id: 'description', type: 'text', value: lot.item.description, label: 'Description', required: true},
+            {id: 'imgUrl', type: 'url', value: lot.item.imgUrl, label: 'Image URL', required: true},
             {
                 id: 'domainId',
                 type: 'select',
                 value: lot.item.domainId,
                 label: 'Domain',
-                options: categories.domains.map(d => ({ value: d.id, label: d.name })),
+                options: categories.domains.map(d => ({value: d.id, label: d.name})),
                 required: true
             },
             {
@@ -108,7 +106,7 @@
                 type: 'select',
                 value: lot.item.licenseId,
                 label: 'License',
-                options: categories.licenses.map(l => ({ value: l.id, label: l.type })),
+                options: categories.licenses.map(l => ({value: l.id, label: l.type})),
                 required: true
             },
             {
@@ -116,14 +114,55 @@
                 type: 'select',
                 value: lot.item.languageId,
                 label: 'Language',
-                options: categories.languages.map(l => ({ value: l.id, label: l.name })),
+                options: categories.languages.map(l => ({value: l.id, label: l.name})),
                 required: true
             },
-            { id: 'start', type: 'datetime-local', value: formatDateTimeLocal(lot.start), label: 'Start Date', required: true },
-            { id: 'end', type: 'datetime-local', value: formatDateTimeLocal(lot.end), label: 'End Date', required: true },
-            { id: 'minBid', type: 'number', value: lot.minBid, label: 'Min Bid', required: true }
+            {
+                id: 'start',
+                type: 'datetime-local',
+                value: formatDateTimeLocal(lot.start),
+                label: 'Start Date',
+                required: true
+            },
+            {id: 'end', type: 'datetime-local', value: formatDateTimeLocal(lot.end), label: 'End Date', required: true},
+            {id: 'minBid', type: 'number', value: lot.minBid, label: 'Min Bid', required: true}
         ];
+    };
 
+    const openAddModal = () => {
+        editingLot = {}; // новый лот
+        fields = [
+            {id: 'name', type: 'text', value: '', label: 'Name', required: true},
+            {id: 'description', type: 'text', value: '', label: 'Description', required: true},
+            {id: 'imgUrl', type: 'url', value: '', label: 'Image URL', required: true},
+            {
+                id: 'domainId',
+                type: 'select',
+                value: '',
+                label: 'Domain',
+                options: categories.domains.map(d => ({value: d.id, label: d.name})),
+                required: true
+            },
+            {
+                id: 'licenseId',
+                type: 'select',
+                value: '',
+                label: 'License',
+                options: categories.licenses.map(l => ({value: l.id, label: l.type})),
+                required: true
+            },
+            {
+                id: 'languageId',
+                type: 'select',
+                value: '',
+                label: 'Language',
+                options: categories.languages.map(l => ({value: l.id, label: l.name})),
+                required: true
+            },
+            {id: 'start', type: 'datetime-local', value: '', label: 'Start Date', required: true},
+            {id: 'end', type: 'datetime-local', value: '', label: 'End Date', required: true},
+            {id: 'minBid', type: 'number', value: '', label: 'Min Bid', required: true}
+        ];
     };
 
     const closeEditModal = () => {
@@ -146,8 +185,13 @@
                 minBid: Number(fields.find(f => f.id === 'minBid').value)
             };
 
-            await fetch(`http://localhost:3000/api/lots/${editingLot.id}`, {
-                method: 'PATCH',
+            const method = editingLot.id ? 'PATCH' : 'POST';
+            const url = editingLot.id
+                ? `http://localhost:3000/api/lots/${editingLot.id}`
+                : `http://localhost:3000/api/lots`;
+
+            await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -157,7 +201,7 @@
             editingLot = null;
             await fetchLots();
         } catch (error) {
-            console.error('Error updating lot:', error);
+            console.error('Error saving lot:', error);
         }
     };
 
@@ -179,6 +223,9 @@
                 placeholder="Search for lots..."
                 on:input={() => handleSearch(searchQuery)}
         />
+        {#if currentUser?.isAdmin}
+            <button on:click={openAddModal}>Add</button>
+        {/if}
     </header>
 
     <div class="content-wrapper">
@@ -195,11 +242,11 @@
         <div class="lot-list-wrapper">
             <LotList
                     title="Available Lots"
-                    lots={lots}
+                    {lots}
                     emptyMessage="No lots available at the moment."
-                    onDetailsClick={(id) => goToDetails(id)}
-                    onDeleteClick={(id) => deleteLot(id)}
-                    onEditClick={(lot) => openEditModal(lot)}
+                    onDetailsClick={goToDetails}
+                    onDeleteClick={deleteLot}
+                    onEditClick={openEditModal}
                     isAdmin={currentUser?.isAdmin}
             />
         </div>
@@ -228,6 +275,7 @@
         margin-bottom: 1rem;
         display: flex;
         justify-content: center;
+        gap: 1rem;
     }
 
     .search-bar input[type="text"] {
