@@ -2,11 +2,14 @@
   import logo from './assets/svelte.png'
   import router from 'page';
 
+  import { isLoggedIn } from './utils/auth';
+
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
   import Header from "./components/Header.svelte";
   import Login from "./pages/Login.svelte";
   import SignUp from "./pages/SignUp.svelte";
+  import UserDashboard from "./pages/UserDashboard.svelte";
 
   let page;
   let params;
@@ -22,13 +25,25 @@
     params = ctx;
   });
   router('/login', (ctx) => {
+    if ($isLoggedIn) {
+      return router.redirect('/');
+    }
       page = Login;
       currentRoute = ctx.pathname;
       params = ctx;
   });
 
   router('/sign-up', (ctx) => {
+    if ($isLoggedIn) {
+      return router.redirect('/');
+    }
     page = SignUp;
+    currentRoute = ctx.pathname;
+    params = ctx;
+  });
+
+  router('/my-dashboard', (ctx) => {
+    page = UserDashboard;
     currentRoute = ctx.pathname;
     params = ctx;
   });

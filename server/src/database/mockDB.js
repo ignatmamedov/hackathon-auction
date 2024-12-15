@@ -47,7 +47,7 @@ db.lots.push(
         new Project(
             "Name0",
             "Description0",
-            "someurl0",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[0].id,
             db.licenses[0].id,
             db.languages[0].id
@@ -62,7 +62,7 @@ db.lots.push(
         new Project(
             "Name1",
             "Description1",
-            "someurl1",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[1].id,
             db.licenses[1].id,
             db.languages[1].id
@@ -77,7 +77,7 @@ db.lots.push(
         new Project(
             "Name2",
             "Description2",
-            "someurl2",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[2].id,
             db.licenses[2].id,
             db.languages[2].id
@@ -92,7 +92,7 @@ db.lots.push(
         new Project(
             "Name3",
             "Description3",
-            "someurl3",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[2].id,
             db.licenses[2].id,
             db.languages[2].id
@@ -109,8 +109,17 @@ db.bids.push(
         "2024-12-12T12:10:00",
         db.lots[0].id,
         db.users[1].id,
-        1001
+        1003
     ),
+
+    new Bid(
+        "9a90f3eb-04ad-4a51-8960-5ff5e5c96f25",
+        "2024-12-12T12:10:00",
+        db.lots[0].id,
+        db.users[2].id,
+        1005
+    ),
+
     new Bid(
         "37ffaac0-d66b-4c5b-84af-55f0808f24d6",
         "2024-12-12T12:10:00",
@@ -121,7 +130,7 @@ db.bids.push(
     new Bid(
         "f5f867ef-041f-491d-b9d3-57fdc740fc96",
         "2024-12-12T12:10:00",
-        db.lots[1].id,
+        db.lots[3].id,
         db.users[1].id,
         1001
     ),

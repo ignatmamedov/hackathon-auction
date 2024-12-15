@@ -1,26 +1,28 @@
 <script>
+    import AuthForm from '../components/AuthForm.svelte';
+    import { loginSchema } from '../utils/validation.js';
     import { login } from '../utils/auth';
     import page from 'page';
-    import { z } from 'zod';
 
-    let email = '';
-    let password = '';
+    let fields = [
+        { id: 'email', type: 'email', value: '', label: 'Email', placeholder: 'Enter your email', required: true },
+        { id: 'password', type: 'password', value: '', label: 'Password', placeholder: 'Enter your password', required: true }
+    ];
+
     let errorMessage = '';
-
-    const loginSchema = z.object({
-        email: z.string().email({ message: 'Invalid email format' }),
-        password: z.string().min(8, { message: 'Password must be at least 8 characters long' })
-    });
 
     const handleLogin = async () => {
         errorMessage = '';
 
+        const email = fields[0].value;
+        const password = fields[1].value;
+
         try {
-            const validatedData = loginSchema.parse({ email, password });
+            const validatedData = loginSchema.parse({email, password});
 
             const response = await fetch(`http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}/api/auth/tokens`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(validatedData)
             });
 
@@ -38,34 +40,9 @@
     };
 </script>
 
-<main>
-    <h1>Login</h1>
-
-    {#if errorMessage}
-        <div class="error">{errorMessage}</div>
-    {/if}
-
-    <form on:submit|preventDefault={handleLogin}>
-        <label for="email">Email</label>
-        <input
-                id="email"
-                type="email"
-                bind:value={email}
-                placeholder="Enter your email"
-                required
-        />
-
-        <label for="password">Password</label>
-        <input
-                id="password"
-                type="password"
-                bind:value={password}
-                placeholder="Enter your password"
-                required
-        />
-
-        <button type="submit">Login</button>
-    </form>
-
-    <p>Don't have an account? <a href="/sign-up">Sign Up</a></p>
-</main>
+<AuthForm
+        bind:fields
+        onSubmit={handleLogin}
+        buttonText="Login"
+        errorMessage={errorMessage}
+/>
