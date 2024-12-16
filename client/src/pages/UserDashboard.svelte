@@ -14,11 +14,21 @@
     let userEmail = '';
     let totalPayment = 0;
 
+    /**
+     * Fetches categories from the API and updates the local state.
+     * @async
+     * @returns {Promise<void>}
+     */
     const fetchCategories = async () => {
         const res = await fetch(`${URL}/api/categories`);
         categories = await res.json();
     };
 
+    /**
+     * Fetches bids from the API and updates the local state.
+     * @async
+     * @returns {Promise<void>}
+     */
     const fetchBids = async () => {
         const res = await fetch(`${URL}/api/bids`, {
             headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
@@ -27,6 +37,11 @@
         await fetchLots();
     };
 
+    /**
+     * Fetches lots corresponding to the user's bids from the API and updates the local state.
+     * @async
+     * @returns {Promise<void>}
+     */
     const fetchLots = async () => {
         const lotRequests = bids.map(bid =>
             fetch(`${URL}/api/lots/${bid.lotId}`).then(res => res.json())
@@ -40,6 +55,11 @@
         await fetchTopBidsForLots();
     };
 
+    /**
+     * Fetches the top bids for all lots and updates the local state.
+     * @async
+     * @returns {Promise<void>}
+     */
     const fetchTopBidsForLots = async () => {
         const lotIds = Object.keys(lots);
         const topBidsRequests = lotIds.map(lotId =>
@@ -57,6 +77,9 @@
         processBids();
     };
 
+    /**
+     * Processes the user's bids to separate them into "won" and "active" categories.
+     */
     const processBids = () => {
         const now = new Date();
 

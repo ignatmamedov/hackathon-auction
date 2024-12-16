@@ -12,6 +12,11 @@
 
     let errorMessage = '';
 
+    /**
+     * Handles the sign-up process by validating the form data and sending a registration request.
+     * @async
+     * @returns {Promise<void>}
+     */
     const handleSignUp = async () => {
         errorMessage = '';
 

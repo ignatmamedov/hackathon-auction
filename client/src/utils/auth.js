@@ -17,12 +17,19 @@ if (token) {
 export const isLoggedIn = writable(Boolean(initialUser));
 export const user = writable(initialUser);
 
+/**
+ * Logs the user out by removing the token from localStorage and updating state.
+ */
 export const logout = () => {
     localStorage.removeItem('token');
     isLoggedIn.set(false);
     user.set(null);
 };
 
+/**
+ * Logs the user in by storing the token and updating the user's state.
+ * @param {string} token - The JWT token to store and extract user information from.
+ */
 export const login = (token) => {
     try {
         localStorage.setItem('token', token);
@@ -35,6 +42,13 @@ export const login = (token) => {
     }
 };
 
+/**
+ * Registers a new user by sending a request to the server.
+ * @async
+ * @param {string} email - The email of the new user.
+ * @param {string} password - The password of the new user.
+ * @throws {Error} Throws an error if registration fails.
+ */
 export const register = async (email, password) => {
     try {
         const response = await fetch(`${URL}/api/auth`, {

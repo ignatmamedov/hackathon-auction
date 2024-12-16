@@ -6,6 +6,9 @@
     $: userInitials = userEmail ? userEmail.slice(0, 2).toUpperCase() : '';
     $: isAdmin = $user?.isAdmin;
 
+    /**
+     * Logs out the current user and redirects to the login page.
+     */
     const handleLogout = () => {
         logout();
         page('/login');

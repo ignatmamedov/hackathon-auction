@@ -19,6 +19,11 @@
     let eventSource;
     let timeInterval;
 
+    /**
+     * Fetches categories from the API.
+     * @async
+     * @returns {Promise<void>}
+     */
     async function fetchCategories() {
         const res = await fetch(`${URL}/api/categories`);
         if (!res.ok) {
@@ -28,6 +33,11 @@
         categories = await res.json();
     }
 
+    /**
+     * Fetches lot details from the API.
+     * @async
+     * @returns {Promise<void>}
+     */
     async function fetchLot() {
         const res = await fetch(`${URL}/api/lots/${lotId}`);
         if (!res.ok) {
@@ -39,6 +49,11 @@
         updateTime();
     }
 
+    /**
+     * Fetches bids for the lot from the API.
+     * @async
+     * @returns {Promise<void>}
+     */
     async function fetchBids() {
         const res = await fetch(`${URL}/api/lots/${lotId}/bids`);
         if (!res.ok) {
@@ -50,6 +65,9 @@
         updateTopBid();
     }
 
+    /**
+     * Updates the top bid for the lot.
+     */
     function updateTopBid() {
         if (!lot) return;
         const topBidAmount = bids.length > 0 ? Math.max(...bids.map(b => Number(b.amount))) : lot.minBid;
@@ -61,6 +79,11 @@
         userEmail = u?.email || '';
     });
 
+    /**
+     * Places a bid for the lot.
+     * @async
+     * @returns {Promise<void>}
+     */
     async function placeBid() {
         bidError = '';
         const bidValue = Number(newBidAmount);
@@ -106,6 +129,9 @@
         }
     }
 
+    /**
+     * Updates the remaining time for the lot.
+     */
     function updateTime() {
         if (lot) {
             timeLeft = calculateTimeLeft(lot.end);

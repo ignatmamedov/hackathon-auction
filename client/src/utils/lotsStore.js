@@ -6,6 +6,12 @@ export const categories = writable({ domains: [], licenses: [], languages: [] })
 export const searchQuery = writable('');
 export const filters = writable({ domainIds: [], licenseIds: [], languageIds: [] });
 
+/**
+ * Builds query parameters from search query and filters.
+ * @param {string} searchQueryValue - The search query value.
+ * @param {Object} filtersValue - The filters object.
+ * @returns {string} URL query parameters.
+ */
 function buildQueryParams(searchQueryValue, filtersValue) {
     const params = new URLSearchParams();
     if (searchQueryValue) params.append('query', searchQueryValue);
@@ -15,6 +21,11 @@ function buildQueryParams(searchQueryValue, filtersValue) {
     return params.toString();
 }
 
+/**
+ * Fetches categories from the API and updates the store.
+ * @async
+ * @returns {Promise<void>}
+ */
 export async function fetchCategories() {
     try {
         const res = await fetch(`${URL}/api/categories`);
@@ -22,6 +33,11 @@ export async function fetchCategories() {
     } catch {}
 }
 
+/**
+ * Fetches lots from the API and updates the store.
+ * @async
+ * @returns {Promise<void>}
+ */
 export async function fetchLots() {
     try {
         const query = buildQueryParams(get(searchQuery), get(filters));
@@ -36,6 +52,9 @@ export async function fetchLots() {
     } catch {}
 }
 
+/**
+ * Updates the time left for each lot in the store.
+ */
 export function updateTimeLeft() {
     lots.update(currentLots => currentLots.map(lot => ({
         ...lot,

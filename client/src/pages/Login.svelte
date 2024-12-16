@@ -12,6 +12,12 @@
 
     let errorMessage = '';
 
+    /**
+     * Handles the login process for the user.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
     const handleLogin = async () => {
         errorMessage = '';
 

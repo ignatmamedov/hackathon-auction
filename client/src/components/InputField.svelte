@@ -6,6 +6,10 @@
     export let placeholder = '';
     export let required = false;
 
+    /**
+     * Handles the input event for the input field.
+     * Updates the value based on the input type.
+     */
     const handleInput = (event) => {
         if (type === 'number') {
             value = event.target.value === '' ? null : event.target.valueAsNumber;

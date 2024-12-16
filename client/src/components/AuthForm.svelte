@@ -8,6 +8,10 @@
     export let buttonText = 'Submit';
     export let errorMessage = '';
 
+    /**
+     * Handles form submission event.
+     * @param {Event} event - The form submit event.
+     */
     const handleSubmit = (event) => {
         event.preventDefault();
         onSubmit();

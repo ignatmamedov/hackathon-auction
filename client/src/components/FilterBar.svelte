@@ -5,6 +5,11 @@
     export let onSearch;
     export let onFilterChange;
 
+    /**
+     * Handles checkbox change event to update the filters.
+     * @param {string} categoryType - The type of the category to update ('domainIds', 'licenseIds', 'languageIds').
+     * @param {number} id - The ID of the item being toggled.
+     */
     const handleCheckboxChange = (categoryType, id) => {
         const updatedFilters = { ...filters };
         updatedFilters[categoryType] = updatedFilters[categoryType].includes(id)

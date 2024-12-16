@@ -8,6 +8,12 @@
     export let onClose;
     export let onSave;
 
+    /**
+     * Formats a date to the "YYYY-MM-DDTHH:MM" format.
+     *
+     * @param {string|Date} date - The date to format.
+     * @returns {string} The formatted date-time string.
+     */
     function formatDateTimeLocal(date) {
         return new Date(date).toISOString().slice(0, 16);
     }
@@ -19,6 +25,13 @@
         ? prepareFields(editingLot, categories)
         : fields;
 
+    /**
+     * Prepares form fields for the lot edit form.
+     *
+     * @param {Object} lot - The lot being edited.
+     * @param {Object} cats - The categories for the lot.
+     * @returns {Array<Object>} The prepared form fields.
+     */
     function prepareFields(lot, cats) {
         return [
             { id: 'name', type: 'text', value: lot?.item?.name || '', label: 'Name', required: true },
@@ -54,6 +67,12 @@
         ];
     }
 
+    /**
+     * Collects and formats the payload for the lot submission.
+     *
+     * @param {Array<Object>} fields - The form fields.
+     * @returns {Object} The formatted payload.
+     */
     function collectPayload(fields) {
         return {
             item: {
@@ -70,6 +89,12 @@
         };
     }
 
+    /**
+     * Handles form submission, validates, and saves the lot.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
     async function handleSubmit() {
         errorMessage = '';
         const payload = collectPayload(fields);

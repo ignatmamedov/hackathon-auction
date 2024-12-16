@@ -20,20 +20,46 @@
         intervalId = setInterval(() => updateTimeLeft(), 1000);
     });
 
+    /**
+     * Handles the search input and fetches lots based on the search query.
+     *
+     * @async
+     * @param {string} query - The search query.
+     * @returns {Promise<void>}
+     */
     async function handleSearch(query) {
         searchQuery.set(query);
         await fetchLots();
     }
 
+    /**
+     * Handles filter changes and fetches lots based on the updated filters.
+     *
+     * @async
+     * @param {Object} newFilters - The updated filters.
+     * @returns {Promise<void>}
+     */
     async function handleFilterChange(newFilters) {
         filters.set(newFilters);
         await fetchLots();
     }
 
+    /**
+     * Navigates to the lot details page.
+     *
+     * @param {number|string} id - The ID of the lot.
+     */
     function goToDetails(id) {
         window.location.href = `/lots/${id}`;
     }
 
+    /**
+     * Deletes a lot by its ID.
+     *
+     * @async
+     * @param {number|string} id - The ID of the lot to delete.
+     * @returns {Promise<void>}
+     */
     async function deleteLot(id) {
         await fetch(`${URL}/api/lots/${id}`, {
             method: 'DELETE',
@@ -42,21 +68,40 @@
         await fetchLots();
     }
 
+    /**
+     * Opens the edit modal for the selected lot.
+     *
+     * @param {Object} lot - The lot to be edited.
+     */
     function openEditModal(lot) {
         editingLot = lot;
         showModal = true;
     }
 
+    /**
+     * Opens the modal to add a new lot.
+     */
     function openAddModal() {
         editingLot = {};
         showModal = true;
     }
 
+    /**
+     * Closes the modal for lot editing or adding.
+     */
     function closeModal() {
         showModal = false;
         editingLot = null;
     }
 
+    /**
+     * Saves changes to an existing lot or creates a new lot.
+     *
+     * @async
+     * @param {Object} payload - The lot data payload.
+     * @param {number|string|null} id - The ID of the lot (if editing an existing lot).
+     * @returns {Promise<void>}
+     */
     async function saveLotChanges(payload, id) {
         const method = id ? 'PATCH' : 'POST';
         const url = id ? `${URL}/api/lots/${id}` : `${URL}/api/lots`;
