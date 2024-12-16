@@ -2,7 +2,7 @@
   import logo from './assets/svelte.png'
   import router from 'page';
 
-  import { isLoggedIn } from './utils/auth';
+  import { isLoggedIn, user } from './utils/auth';
 
   import Header from "./components/Header.svelte";
   import Login from "./pages/Login.svelte";
@@ -45,6 +45,9 @@
   });
 
   router('/my-dashboard', (ctx) => {
+    if (!$isLoggedIn || ($isLoggedIn && $user?.isAdmin)) {
+      return router.redirect('/');
+    }
     page = UserDashboard;
     currentRoute = ctx.pathname;
     params = ctx;
