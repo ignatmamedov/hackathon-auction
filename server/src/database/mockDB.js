@@ -62,7 +62,7 @@ db.lots.push(
         new Project(
             "Cloud Data Migrator",
             "A seamless cloud migration tool that automates moving large datasets to AWS or Azure with zero downtime.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://soszeropol2030.eu/wp-content/uploads/2023/12/zeropol_logo_vertical.png",
             db.domains[1].id,
             db.licenses[1].id,
             db.languages[1].id
@@ -77,7 +77,7 @@ db.lots.push(
         new Project(
             "Mobile Health Tracker",
             "A health-tracking Android application that integrates with wearable devices and provides real-time health analytics.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://upload.wikimedia.org/wikipedia/commons/a/a8/The_Shift_Project_Logo_small_bleu.png",
             db.domains[2].id,
             db.licenses[2].id,
             db.languages[2].id
@@ -92,7 +92,7 @@ db.lots.push(
         new Project(
             "Real-Time Auction Platform",
             "A real-time bidding platform that allows multiple users to place bids concurrently. Built for scalability and speed.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://i.pinimg.com/originals/cf/8a/70/cf8a70264efe1c12522359db0501c99f.png",
             db.domains[2].id,
             db.licenses[2].id,
             db.languages[2].id
@@ -107,7 +107,7 @@ db.lots.push(
         new Project(
             "Virtual Reality Learning Platform",
             "A VR-based interactive learning platform that makes education more engaging and immersive for students of all ages.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/f7bbdc61566177.5a72772c66380.png",
             db.domains[0].id,
             db.licenses[1].id,
             db.languages[2].id
@@ -122,7 +122,7 @@ db.lots.push(
         new Project(
             "Decentralized Voting System",
             "A blockchain-based voting system designed for transparent and tamper-proof elections with complete anonymity.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://gendercool.org/wp-content/uploads/2021/03/GenderCool-logo-retina.png",
             db.domains[1].id,
             db.licenses[2].id,
             db.languages[1].id
@@ -137,7 +137,7 @@ db.lots.push(
         new Project(
             "AI-Driven Resume Analyzer",
             "An AI tool that scans resumes and provides suggestions to increase hiring chances based on industry standards.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://galaxyproject.org/images/galaxy-logos/galaxy_project_logo_square.png",
             db.domains[2].id,
             db.licenses[0].id,
             db.languages[0].id
@@ -152,7 +152,7 @@ db.lots.push(
         new Project(
             "Machine Learning Model Hub",
             "A marketplace for buying, selling, and sharing machine learning models with pre-trained weights for developers.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://cdn.dribbble.com/userupload/3056293/file/original-65c21f6c47764539a687489ffeb0df8e.png",
             db.domains[0].id,
             db.licenses[1].id,
             db.languages[1].id
@@ -167,7 +167,7 @@ db.lots.push(
         new Project(
             "Open Source SaaS Boilerplate",
             "A SaaS starter kit with user authentication, subscription management, and a modular architecture ready to deploy.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://cdn.shopify.com/s/files/1/1095/6418/files/a2d5308c1ecc6ab.png?v=1668262258",
             db.domains[1].id,
             db.licenses[2].id,
             db.languages[0].id
@@ -182,7 +182,7 @@ db.lots.push(
         new Project(
             "IoT Smart Home System",
             "A plug-and-play IoT smart home system for controlling lights, appliances, and security devices via a mobile app.",
-            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/NuGet_project_logo.svg/512px-NuGet_project_logo.svg.png",
             db.domains[2].id,
             db.licenses[0].id,
             db.languages[2].id
