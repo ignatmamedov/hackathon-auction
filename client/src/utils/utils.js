@@ -1,3 +1,5 @@
+export const URL = `http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}`;
+
 export const calculateTimeLeft = (endDate) => {
     const now = new Date().getTime();
     const end = new Date(endDate).getTime();

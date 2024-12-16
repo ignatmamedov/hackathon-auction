@@ -3,6 +3,7 @@
     import { loginSchema } from '../utils/validation.js';
     import { login } from '../utils/auth';
     import page from 'page';
+    import {URL} from "../utils/utils.js";
 
     let fields = [
         { id: 'email', type: 'email', value: '', label: 'Email', placeholder: 'Enter your email', required: true },
@@ -19,7 +20,7 @@
 
         try {
             const validatedData = loginSchema.parse({email, password});
-            const response = await fetch(`http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}/api/auth/tokens`, {
+            const response = await fetch(`${URL}/api/auth/tokens`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(validatedData)

@@ -1,7 +1,7 @@
 <script>
     import {onMount, onDestroy} from 'svelte';
     import {user, isLoggedIn} from '../utils/auth';
-    import {calculateTimeLeft, mapCategories} from '../utils/utils';
+    import {calculateTimeLeft, mapCategories, URL} from '../utils/utils';
     import ErrorMessage from '../components/ErrorMessage.svelte';
 
     export let params;
@@ -20,7 +20,7 @@
     let timeInterval;
 
     async function fetchCategories() {
-        const res = await fetch('http://localhost:3000/api/categories');
+        const res = await fetch(`${URL}/api/categories`);
         if (!res.ok) {
             console.error('Failed to load categories');
             return;
@@ -29,7 +29,7 @@
     }
 
     async function fetchLot() {
-        const res = await fetch(`http://localhost:3000/api/lots/${lotId}`);
+        const res = await fetch(`${URL}/api/lots/${lotId}`);
         if (!res.ok) {
             errorMessage = 'Lot not found or error while fetching lot.';
             return;
@@ -40,7 +40,7 @@
     }
 
     async function fetchBids() {
-        const res = await fetch(`http://localhost:3000/api/lots/${lotId}/bids`);
+        const res = await fetch(`${URL}/api/lots/${lotId}/bids`);
         if (!res.ok) {
             console.error('Failed to fetch bids');
             return;
@@ -83,7 +83,7 @@
             }
 
             const body = JSON.stringify({lotId, amount: bidValue});
-            const res = await fetch(`http://localhost:3000/api/bids`, {
+            const res = await fetch(`${URL}/api/bids`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -120,7 +120,7 @@
 
         timeInterval = setInterval(updateTime, 1000);
 
-        eventSource = new EventSource('http://localhost:3000/api/bids/updates');
+        eventSource = new EventSource(`${URL}/api/bids/updates`);
 
         eventSource.onmessage = (event) => {
             const newBid = JSON.parse(event.data);

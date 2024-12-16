@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { URL } from './utils.js';
 
 const token = localStorage.getItem('token');
 let initialUser = null;
@@ -36,7 +37,7 @@ export const login = (token) => {
 
 export const register = async (email, password) => {
     try {
-        const response = await fetch(`http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}/api/auth`, {
+        const response = await fetch(`${URL}/api/auth`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })

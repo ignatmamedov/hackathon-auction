@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { calculateTimeLeft, mapCategories } from './utils.js';
+import {calculateTimeLeft, mapCategories, URL} from './utils.js';
 
 export const lots = writable([]);
 export const categories = writable({ domains: [], licenses: [], languages: [] });
@@ -17,7 +17,7 @@ function buildQueryParams(searchQueryValue, filtersValue) {
 
 export async function fetchCategories() {
     try {
-        const res = await fetch('http://localhost:3000/api/categories');
+        const res = await fetch(`${URL}/api/categories`);
         categories.set(await res.json());
     } catch {}
 }
@@ -25,7 +25,7 @@ export async function fetchCategories() {
 export async function fetchLots() {
     try {
         const query = buildQueryParams(get(searchQuery), get(filters));
-        const res = await fetch(`http://localhost:3000/api/lots?${query}`);
+        const res = await fetch(`${URL}/api/lots?${query}`);
         const data = await res.json();
         const cats = get(categories);
         lots.set(data.map(lot => ({

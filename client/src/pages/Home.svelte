@@ -6,6 +6,7 @@
     import FilterBar from '../components/FilterBar.svelte';
     import LotModal from '../components/LotModal.svelte';
     import Button from '../components/Button.svelte';
+    import {URL} from "../utils/utils.js";
 
     let currentUser = null;
     let intervalId;
@@ -34,7 +35,7 @@
     }
 
     async function deleteLot(id) {
-        await fetch(`http://localhost:3000/api/lots/${id}`, {
+        await fetch(`${URL}/api/lots/${id}`, {
             method: 'DELETE',
             headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
         });
@@ -58,7 +59,7 @@
 
     async function saveLotChanges(payload, id) {
         const method = id ? 'PATCH' : 'POST';
-        const url = id ? `http://localhost:3000/api/lots/${id}` : `http://localhost:3000/api/lots`;
+        const url = id ? `${URL}/api/lots/${id}` : `${URL}/api/lots`;
         await fetch(url, {
             method,
             headers: {

@@ -2,7 +2,7 @@
     import {onMount, onDestroy} from 'svelte';
     import SummaryBar from '../components/dashboard/SummaryBar.svelte';
     import LotList from '../components/dashboard/LotList.svelte';
-    import {calculateTimeLeft, mapCategories} from '../utils/utils.js';
+    import {calculateTimeLeft, mapCategories, URL} from '../utils/utils.js';
     import {user} from '../utils/auth';
 
     let bids = [];
@@ -15,12 +15,12 @@
     let totalPayment = 0;
 
     const fetchCategories = async () => {
-        const res = await fetch('http://localhost:3000/api/categories');
+        const res = await fetch(`${URL}/api/categories`);
         categories = await res.json();
     };
 
     const fetchBids = async () => {
-        const res = await fetch('http://localhost:3000/api/bids', {
+        const res = await fetch(`${URL}/api/bids`, {
             headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
         });
         bids = await res.json();
@@ -29,7 +29,7 @@
 
     const fetchLots = async () => {
         const lotRequests = bids.map(bid =>
-            fetch(`http://localhost:3000/api/lots/${bid.lotId}`).then(res => res.json())
+            fetch(`${URL}/api/lots/${bid.lotId}`).then(res => res.json())
         );
         const lotDetails = await Promise.all(lotRequests);
 
@@ -43,7 +43,7 @@
     const fetchTopBidsForLots = async () => {
         const lotIds = Object.keys(lots);
         const topBidsRequests = lotIds.map(lotId =>
-            fetch(`http://localhost:3000/api/lots/${lotId}/bids`).then(res => res.json())
+            fetch(`${URL}/api/lots/${lotId}/bids`).then(res => res.json())
         );
 
         const allBidsForLots = await Promise.all(topBidsRequests);
