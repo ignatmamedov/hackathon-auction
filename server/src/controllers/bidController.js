@@ -35,15 +35,20 @@ const isLotActive = (lot) => {
 };
 
 /**
- * Checks if the user has already placed a bid on the given lot.
+ * Checks if the user has already placed the highest bid on the given lot.
  *
  * @param {string} lotId - The ID of the lot.
  * @param {string|number} userId - The ID of the user.
- * @throws {Error} If the user has already bid on this lot (400).
+ * @throws {Error} If the user's bid is the highest on this lot (400).
  */
 const isUserAlreadyBid = (lotId, userId) => {
-    const existingBid = connector.readAll('bids').find(bid => bid.lotId === lotId && bid.userId === userId);
-    if (existingBid) {
+    const lotBids = connector.readAll('bids').filter(bid => bid.lotId === lotId);
+
+    if (lotBids.length === 0) return;
+
+    const highestBid = lotBids.reduce((max, bid) => bid.amount > max.amount ? bid : max, lotBids[0]);
+
+    if (highestBid.userId === userId) {
         throw createErrorResponse(400, 'You have already placed a bid on this lot.');
     }
 };

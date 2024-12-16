@@ -54,7 +54,7 @@ db.lots.push(
         ),
         "2024-12-12T12:00:00",
         "2025-02-14T12:00:00",
-        1000
+        1005
     ),
 
     new Lot(
@@ -69,7 +69,7 @@ db.lots.push(
         ),
         "2024-12-12T12:00:00",
         "2025-02-14T12:00:00",
-        1000
+        1001
     ),
 
     new Lot(
@@ -99,8 +99,98 @@ db.lots.push(
         ),
         "2024-12-12T12:00:00",
         "2024-12-12T13:00:00",
-        1000
+        1001
     ),
+
+    new Lot(
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        new Project(
+            "Virtual Reality Learning Platform",
+            "A VR-based interactive learning platform that makes education more engaging and immersive for students of all ages.",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            db.domains[0].id,
+            db.licenses[1].id,
+            db.languages[2].id
+        ),
+        "2024-12-12T12:00:00",
+        "2025-01-20T12:00:00",
+        1500
+    ),
+
+    new Lot(
+        "f1e2d3c4-b5a6-7890-bcde-ef6543210987",
+        new Project(
+            "Decentralized Voting System",
+            "A blockchain-based voting system designed for transparent and tamper-proof elections with complete anonymity.",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            db.domains[1].id,
+            db.licenses[2].id,
+            db.languages[1].id
+        ),
+        "2024-12-12T12:00:00",
+        "2025-03-10T12:00:00",
+        2000
+    ),
+
+    new Lot(
+        "1a2b3c4d-e5f6-7890-abcd-ef0987654321",
+        new Project(
+            "AI-Driven Resume Analyzer",
+            "An AI tool that scans resumes and provides suggestions to increase hiring chances based on industry standards.",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            db.domains[2].id,
+            db.licenses[0].id,
+            db.languages[0].id
+        ),
+        "2024-12-12T12:00:00",
+        "2025-02-25T12:00:00",
+        1200
+    ),
+
+    new Lot(
+        "12345678-90ab-cdef-1234-567890abcdef",
+        new Project(
+            "Machine Learning Model Hub",
+            "A marketplace for buying, selling, and sharing machine learning models with pre-trained weights for developers.",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            db.domains[0].id,
+            db.licenses[1].id,
+            db.languages[1].id
+        ),
+        "2024-12-12T12:00:00",
+        "2025-01-28T12:00:00",
+        1800
+    ),
+
+    new Lot(
+        "abcd1234-5678-90ab-cdef-1234567890ab",
+        new Project(
+            "Open Source SaaS Boilerplate",
+            "A SaaS starter kit with user authentication, subscription management, and a modular architecture ready to deploy.",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            db.domains[1].id,
+            db.licenses[2].id,
+            db.languages[0].id
+        ),
+        "2024-12-12T12:00:00",
+        "2025-01-18T12:00:00",
+        1100
+    ),
+
+    new Lot(
+        "abcd5678-1234-90ab-cdef-0987654321ef",
+        new Project(
+            "IoT Smart Home System",
+            "A plug-and-play IoT smart home system for controlling lights, appliances, and security devices via a mobile app.",
+            "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
+            db.domains[2].id,
+            db.licenses[0].id,
+            db.languages[2].id
+        ),
+        "2024-12-12T12:00:00",
+        "2025-02-05T12:00:00",
+        2500
+    )
 )
 
 db.bids.push(
