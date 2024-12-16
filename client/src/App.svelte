@@ -75,9 +75,4 @@
     margin: 0 auto;
   }
 
-  img {
-    height: 16rem;
-    width: 16rem;
-  }
-
 </style>

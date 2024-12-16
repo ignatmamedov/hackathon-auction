@@ -1,8 +1,6 @@
 <script>
     export let filters = { domainIds: [], licenseIds: [], languageIds: [] };
     export let categories = { domains: [], licenses: [], languages: [] };
-    export let searchQuery = '';
-    export let onSearch;
     export let onFilterChange;
 
     /**
