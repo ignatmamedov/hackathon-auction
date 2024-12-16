@@ -15,74 +15,56 @@
     };
 </script>
 
-<div class="filters">
-    <div class="filter-group">
-        <h3>Domains</h3>
-        {#each categories.domains as domain}
-            <label>
-                <input
-                        type="checkbox"
-                        checked={filters.domainIds.includes(domain.id)}
-                        on:change={() => handleCheckboxChange('domainIds', domain.id)}
-                />
-                {domain.name}
-            </label>
-        {/each}
+<div class="space-y-6">
+    <div class="space-y-2">
+        <h3 class="text-lg font-semibold text-gray-700">Domains</h3>
+        <div class="space-y-1">
+            {#each categories.domains as domain}
+                <label class="flex items-center space-x-2 text-gray-600 cursor-pointer">
+                    <input
+                            type="checkbox"
+                            class="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                            checked={filters.domainIds.includes(domain.id)}
+                            on:change={() => handleCheckboxChange('domainIds', domain.id)}
+                    />
+                    <span class="text-sm">{domain.name}</span>
+                </label>
+            {/each}
+        </div>
     </div>
 
-    <div class="filter-group">
-        <h3>Licenses</h3>
-        {#each categories.licenses as license}
-            <label>
-                <input
-                        type="checkbox"
-                        checked={filters.licenseIds.includes(license.id)}
-                        on:change={() => handleCheckboxChange('licenseIds', license.id)}
-                />
-                {license.type}
-            </label>
-        {/each}
+    <div class="space-y-2">
+        <h3 class="text-lg font-semibold text-gray-700">Licenses</h3>
+        <div class="space-y-1">
+            {#each categories.licenses as license}
+                <label class="flex items-center space-x-2 text-gray-600 cursor-pointer">
+                    <input
+                            type="checkbox"
+                            class="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                            checked={filters.licenseIds.includes(license.id)}
+                            on:change={() => handleCheckboxChange('licenseIds', license.id)}
+                    />
+                    <span class="text-sm">{license.type}</span>
+                </label>
+            {/each}
+        </div>
     </div>
 
-    <div class="filter-group">
-        <h3>Languages</h3>
-        {#each categories.languages as language}
-            <label>
-                <input
-                        type="checkbox"
-                        checked={filters.languageIds.includes(language.id)}
-                        on:change={() => handleCheckboxChange('languageIds', language.id)}
-                />
-                {language.name}
-            </label>
-        {/each}
+
+    <div class="space-y-2">
+        <h3 class="text-lg font-semibold text-gray-700">Languages</h3>
+        <div class="space-y-1">
+            {#each categories.languages as language}
+                <label class="flex items-center space-x-2 text-gray-600 cursor-pointer">
+                    <input
+                            type="checkbox"
+                            class="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                            checked={filters.languageIds.includes(language.id)}
+                            on:change={() => handleCheckboxChange('languageIds', language.id)}
+                    />
+                    <span class="text-sm">{language.name}</span>
+                </label>
+            {/each}
+        </div>
     </div>
 </div>
-
-<style>
-    .filters {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .filter-group {
-        background-color: #f9f9f9;
-        padding: 1rem;
-        border-radius: 8px;
-    }
-
-    h3 {
-        margin-bottom: 0.5rem;
-    }
-
-    label {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    label input[type="checkbox"] {
-        margin-right: 0.5rem;
-    }
-</style>

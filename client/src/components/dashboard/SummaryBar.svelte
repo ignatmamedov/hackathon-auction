@@ -4,19 +4,8 @@
     export let userEmail;
 </script>
 
-<div class="summary-bar">
-    <p><strong>Total Bids:</strong> {totalBids}</p>
-    <p><strong>Total Payment:</strong> ${totalPayment}</p>
-    <p><strong>Email:</strong> {userEmail}</p>
+<div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow-md">
+    <p class="text-sm text-gray-700"><strong>Total Bids:</strong> {totalBids}</p>
+    <p class="text-sm text-gray-700"><strong>Total Payment:</strong> ${totalPayment}</p>
+    <p class="text-sm text-gray-700"><strong>Email:</strong> {userEmail}</p>
 </div>
-
-<style>
-    .summary-bar {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        background-color: #f4f4f4;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-    }
-</style>

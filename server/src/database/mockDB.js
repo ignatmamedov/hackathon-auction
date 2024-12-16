@@ -45,8 +45,8 @@ db.lots.push(
     new Lot(
         "d9db83b4-d974-4c30-88bd-0bff9aa7dd46",
         new Project(
-            "Name0",
-            "Description0",
+            "AI-Powered Code Reviewer",
+            "An AI-driven tool that automatically reviews and suggests optimizations for your codebase. Designed for Python projects.",
             "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[0].id,
             db.licenses[0].id,
@@ -60,8 +60,8 @@ db.lots.push(
     new Lot(
         "d984e8cb-a11f-468b-a008-f698c21c463c",
         new Project(
-            "Name1",
-            "Description1",
+            "Cloud Data Migrator",
+            "A seamless cloud migration tool that automates moving large datasets to AWS or Azure with zero downtime.",
             "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[1].id,
             db.licenses[1].id,
@@ -75,8 +75,8 @@ db.lots.push(
     new Lot(
         "281ed63c-e3a9-476f-bed8-92b219444e79",
         new Project(
-            "Name2",
-            "Description2",
+            "Mobile Health Tracker",
+            "A health-tracking Android application that integrates with wearable devices and provides real-time health analytics.",
             "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[2].id,
             db.licenses[2].id,
@@ -90,8 +90,8 @@ db.lots.push(
     new Lot(
         "6b70425a-d0ab-4f4c-a091-1d0356e7bc41",
         new Project(
-            "Name3",
-            "Description3",
+            "Real-Time Auction Platform",
+            "A real-time bidding platform that allows multiple users to place bids concurrently. Built for scalability and speed.",
             "https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png",
             db.domains[2].id,
             db.licenses[2].id,

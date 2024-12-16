@@ -71,40 +71,54 @@
     }
 </script>
 
-<main>
-    <header class="search-bar">
-        <input
-                type="text"
-                bind:value={$searchQuery}
-                placeholder="Search for lots..."
-                on:input={() => handleSearch($searchQuery)}
+<main class="min-h-screen bg-gray-100 flex">
+    <aside class="w-[300px] bg-white border border-gray-200 rounded-lg p-4 m-4 shadow-md self-start">
+        <h3 class="text-lg font-semibold mb-4">Filters</h3>
+        <FilterBar
+                filters={$filters}
+                categories={$categories}
+                searchQuery={$searchQuery}
+                onSearch={handleSearch}
+                onFilterChange={handleFilterChange}
         />
-        {#if currentUser?.isAdmin}
-            <Button text="Add" onClick={openAddModal} />
-        {/if}
-    </header>
-    <div class="content-wrapper">
-        <aside class="filter-wrapper">
-            <FilterBar
-                    filters={$filters}
-                    categories={$categories}
-                    searchQuery={$searchQuery}
-                    onSearch={handleSearch}
-                    onFilterChange={handleFilterChange}
-            />
-        </aside>
-        <div class="lot-list-wrapper">
-            <LotList
-                    title="Available Lots"
-                    lots={$lots}
-                    emptyMessage="No lots available at the moment."
-                    onDetailsClick={goToDetails}
-                    onDeleteClick={deleteLot}
-                    onEditClick={openEditModal}
-                    isAdmin={currentUser?.isAdmin}
-            />
+    </aside>
+
+    <div class="flex-1 bg-white rounded-lg m-4 shadow-md">
+        <div class="flex flex-col">
+            <header class="p-4 border-b border-gray-200">
+                <div class="flex flex-col w-full">
+                    <input
+                            type="text"
+                            bind:value={$searchQuery}
+                            placeholder="Search for lots..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            on:input={() => handleSearch($searchQuery)}
+                    />
+
+                    {#if currentUser?.isAdmin}
+                        <Button
+                                text="Add Lot"
+                                onClick={openAddModal}
+                                class="mt-2 w-full bg-emerald-600 text-white text-xs py-2 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                    {/if}
+                </div>
+            </header>
+
+            <div class="p-4">
+                <LotList
+                        title="Available Lots"
+                        lots={$lots}
+                        emptyMessage="No lots available at the moment."
+                        onDetailsClick={goToDetails}
+                        onDeleteClick={deleteLot}
+                        onEditClick={openEditModal}
+                        isAdmin={currentUser?.isAdmin}
+                />
+            </div>
         </div>
     </div>
+
     {#if showModal}
         <LotModal
                 {editingLot}
@@ -115,35 +129,4 @@
     {/if}
 </main>
 
-<style>
-    main {
-        padding: 1rem;
-    }
-    .search-bar {
-        margin-bottom: 1rem;
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-    }
-    .search-bar input[type="text"] {
-        width: 100%;
-        max-width: 600px;
-        padding: 0.75rem;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
-    }
-    .content-wrapper {
-        display: flex;
-        gap: 1rem;
-    }
-    .filter-wrapper {
-        flex: 1;
-        background-color: #f9f9f9;
-        padding: 1rem;
-        border-radius: 8px;
-    }
-    .lot-list-wrapper {
-        flex: 3;
-    }
-</style>
+

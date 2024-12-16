@@ -10,49 +10,35 @@
     export let isAdmin = false;
 </script>
 
-<section>
-    <h1>{title}</h1>
+<section class="max-w-7xl mx-auto mt-10 p-6 bg-gray-50 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">{title}</h1>
+
     {#if lots.length > 0}
-        {#each lots as lot}
-            <LotCard
-                    {lot}
-                    imgUrl={lot.item.imgUrl}
-                    name={lot.item.name}
-                    description={lot.item.description}
-                    endDate={lot.end}
-                    timeLeft={lot.timeLeft}
-                    minBid={lot.minBid}
-                    userBid={lot.userBid}
-                    domain={lot.category.domain}
-                    license={lot.category.license}
-                    language={lot.category.language}
-                    status={title === 'Won Lots' ? 'win' : ''}
-                    showDetailsButton={true}
-                    onDetailsClick={() => onDetailsClick(lot.id)}
-                    onDeleteClick={() => onDeleteClick(lot.id)}
-                    onEditClick={() => onEditClick(lot)}
-                    isAdmin={isAdmin}
-            />
-        {/each}
+        <div class="flex flex-col space-y-6">
+            {#each lots as lot}
+                <LotCard
+                        {lot}
+                        imgUrl={lot.item.imgUrl}
+                        name={lot.item.name}
+                        description={lot.item.description}
+                        endDate={lot.end}
+                        timeLeft={lot.timeLeft}
+                        minBid={lot.minBid}
+                        userBid={lot.userBid}
+                        domain={lot.category.domain}
+                        license={lot.category.license}
+                        language={lot.category.language}
+                        status={title === 'Won Lots' ? 'win' : ''}
+                        showDetailsButton={true}
+                        onDetailsClick={() => onDetailsClick(lot.id)}
+                        onDeleteClick={() => onDeleteClick(lot.id)}
+                        onEditClick={() => onEditClick(lot)}
+                        isAdmin={isAdmin}
+                        class="shadow-md hover:shadow-lg transition-shadow duration-300"
+                />
+            {/each}
+        </div>
     {:else}
-        <p>{emptyMessage}</p>
+        <p class="text-center text-gray-500 text-lg mt-10">{emptyMessage}</p>
     {/if}
 </section>
-
-<style>
-    section {
-        flex: 1;
-        padding: 1rem;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-    }
-
-    h1 {
-        margin-bottom: 1rem;
-    }
-
-    p {
-        margin-top: 1rem;
-    }
-</style>

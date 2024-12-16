@@ -1,6 +1,6 @@
 <script>
     import AuthForm from '../components/AuthForm.svelte';
-    import {lotSchema} from '../utils/validation.js';
+    import { lotSchema } from '../utils/validation.js';
     import Button from '../components/Button.svelte';
 
     export let editingLot = null;
@@ -20,78 +20,37 @@
         : fields;
 
     function prepareFields(lot, cats) {
-        if (!lot || !lot.item) {
-            return [
-                {id: 'name', type: 'text', value: '', label: 'Name', required: true},
-                {id: 'description', type: 'text', value: '', label: 'Description', required: true},
-                {id: 'imgUrl', type: 'url', value: '', label: 'Image URL', required: true},
-                {
-                    id: 'domainId',
-                    type: 'select',
-                    value: '',
-                    label: 'Domain',
-                    options: cats.domains.map(d => ({value: d.id, label: d.name})),
-                    required: true
-                },
-                {
-                    id: 'licenseId',
-                    type: 'select',
-                    value: '',
-                    label: 'License',
-                    options: cats.licenses.map(l => ({value: l.id, label: l.type})),
-                    required: true
-                },
-                {
-                    id: 'languageId',
-                    type: 'select',
-                    value: '',
-                    label: 'Language',
-                    options: cats.languages.map(l => ({value: l.id, label: l.name})),
-                    required: true
-                },
-                {id: 'start', type: 'datetime-local', value: '', label: 'Start Date', required: true},
-                {id: 'end', type: 'datetime-local', value: '', label: 'End Date', required: true},
-                {id: 'minBid', type: 'number', value: '', label: 'Min Bid', required: true}
-            ];
-        }
-
         return [
-            {id: 'name', type: 'text', value: lot.item.name, label: 'Name', required: true},
-            {id: 'description', type: 'text', value: lot.item.description, label: 'Description', required: true},
-            {id: 'imgUrl', type: 'url', value: lot.item.imgUrl, label: 'Image URL', required: true},
+            { id: 'name', type: 'text', value: lot?.item?.name || '', label: 'Name', required: true },
+            { id: 'description', type: 'text', value: lot?.item?.description || '', label: 'Description', required: true },
+            { id: 'imgUrl', type: 'url', value: lot?.item?.imgUrl || '', label: 'Image URL', required: true },
             {
                 id: 'domainId',
                 type: 'select',
-                value: lot.item.domainId,
+                value: lot?.item?.domainId || '',
                 label: 'Domain',
-                options: cats.domains.map(d => ({value: d.id, label: d.name})),
+                options: cats.domains.map(d => ({ value: d.id, label: d.name })),
                 required: true
             },
             {
                 id: 'licenseId',
                 type: 'select',
-                value: lot.item.licenseId,
+                value: lot?.item?.licenseId || '',
                 label: 'License',
-                options: cats.licenses.map(l => ({value: l.id, label: l.type})),
+                options: cats.licenses.map(l => ({ value: l.id, label: l.type })),
                 required: true
             },
             {
                 id: 'languageId',
                 type: 'select',
-                value: lot.item.languageId,
+                value: lot?.item?.languageId || '',
                 label: 'Language',
-                options: cats.languages.map(l => ({value: l.id, label: l.name})),
+                options: cats.languages.map(l => ({ value: l.id, label: l.name })),
                 required: true
             },
-            {
-                id: 'start',
-                type: 'datetime-local',
-                value: formatDateTimeLocal(lot.start),
-                label: 'Start Date',
-                required: true
-            },
-            {id: 'end', type: 'datetime-local', value: formatDateTimeLocal(lot.end), label: 'End Date', required: true},
-            {id: 'minBid', type: 'number', value: lot.minBid, label: 'Min Bid', required: true}
+            { id: 'start', type: 'datetime-local', value: lot?.start ? formatDateTimeLocal(lot.start) : '', label: 'Start Date', required: true },
+            { id: 'end', type: 'datetime-local', value: lot?.end ? formatDateTimeLocal(lot.end) : '', label: 'End Date', required: true },
+            { id: 'minBid', type: 'number', value: lot?.minBid || '', label: 'Min Bid', required: true }
         ];
     }
 
@@ -116,48 +75,34 @@
         const payload = collectPayload(fields);
         try {
             lotSchema.parse(payload);
-            await onSave(payload, editingLot && editingLot.id ? editingLot.id : null);
+            await onSave(payload, editingLot?.id || null);
             onClose();
         } catch (error) {
             if (error.name === 'ZodError') {
-                const errs = Object.values(error.issues).map(i => i.message);
-                errorMessage = errs.join(', ');
+                errorMessage = error.issues.map(i => i.message).join(', ');
             }
         }
     }
 </script>
 
-<div class="modal">
-    <div class="modal-content">
-        <Button text="X" onClick={onClose}/>
-        <AuthForm
-                {fields}
-                onSubmit={handleSubmit}
-                buttonText="Save Changes"
-                errorMessage={errorMessage}
-        />
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-auto">
+    <div class="relative w-full max-w-2xl h-full max-h-screen flex flex-col rounded-lg shadow-lg bg-white">
+        <button
+                class="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                on:click={onClose}
+        >
+            &times;
+        </button>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Edit Lot</h2>
+
+        <div class="flex-1 overflow-y-auto">
+            <AuthForm
+                    {fields}
+                    onSubmit={handleSubmit}
+                    buttonText="Save Changes"
+                    errorMessage={errorMessage}
+                    class="h-full w-full flex flex-col"
+            />
+        </div>
     </div>
 </div>
-
-<style>
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 600px;
-        position: relative;
-    }
-</style>

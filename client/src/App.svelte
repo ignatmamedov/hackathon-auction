@@ -51,12 +51,13 @@
   });
 
   router.start();
+
 </script>
 
 <main>
-  <img src={logo} alt="Svelte Logo" />
   <Header active={currentRoute} />
   <svelte:component this={page} {params} />
+
 </main>
 
 <style>

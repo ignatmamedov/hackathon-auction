@@ -136,119 +136,83 @@
     });
 </script>
 
-<style>
-    .lot-details {
-        display: flex;
-        align-items: flex-start;
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .lot-image img {
-        max-width: 300px;
-        border-radius: 8px;
-    }
-
-    .lot-info {
-        flex: 1;
-    }
-
-    .bids-section {
-        margin-top: 2rem;
-    }
-
-    .bids-list {
-        background: #f9f9f9;
-        padding: 1rem;
-        border-radius: 8px;
-    }
-
-    .bid-item {
-        border-bottom: 1px solid #ccc;
-        padding: 0.5rem 0;
-    }
-
-    .bid-item:last-child {
-        border-bottom: none;
-    }
-
-    .bid-form {
-        margin-top: 1rem;
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
-
-    .bid-form input {
-        width: 100px;
-        padding: 0.5rem;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-    }
-
-    .error {
-        color: red;
-        margin-top: 0.5rem;
-    }
-
-    .countdown {
-        font-weight: bold;
-        color: #333;
-    }
-</style>
-
-<main>
+<main class="min-h-screen bg-gray-100 p-6">
     {#if errorMessage}
-        <ErrorMessage message={errorMessage}/>
+        <ErrorMessage message={errorMessage} />
     {/if}
 
     {#if lot}
-        <div class="lot-details">
-            <div class="lot-image">
-                <img src={lot.item.imgUrl} alt={lot.item.name}/>
-            </div>
-            <div class="lot-info">
-                <h1>{lot.item.name}</h1>
-                <p>{lot.item.description}</p>
-                <p><strong>Min Bid:</strong> {lot.minBid}</p>
-                <p><strong>Current Top Bid:</strong> {lot.topBid ?? lot.minBid}</p>
-            </div>
-        </div>
-
-        <div class="bids-section">
-            <h2>Bids</h2>
-            <div class="bids-list">
-                {#if bids.length > 0}
-                    {#each bids as bid}
-                        <div class="bid-item">
-                            <p><strong>Bidder ID:</strong> {bid.userId}</p>
-                            <p><strong>Amount:</strong> {bid.amount}</p>
-                            <p><strong>Placed at:</strong> {bid.timestamp}</p>
-                        </div>
-                    {/each}
-                {:else}
-                    <p>No bids yet. Be the first!</p>
-                {/if}
-            </div>
-
-            {#if $isLoggedIn && !currentUser.isAdmin}
-                <div class="bid-form">
-                    <input
-                            type="number"
-                            bind:value={newBidAmount}
-                            min={lot.topBid ?? lot.minBid}
-                            step="1"
-                            placeholder="Your bid"
-                            required
-                    />
-                    <button on:click={placeBid}>Place Bid</button>
+        <div class="grid grid-cols-3 gap-8">
+            <div class="space-y-4">
+                <div class="border rounded-lg overflow-hidden shadow-md">
+                    <img src={lot.item.imgUrl} alt={lot.item.name} class="w-full object-cover" />
                 </div>
-                {#if bidError}
-                    <div class="error">{bidError}</div>
+
+                <div class="flex justify-center gap-4">
+
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold shadow-md text-xs overflow-hidden whitespace-nowrap truncate">
+                        {categories.domains.find(d => d.id === lot.item.domainId)?.name || 'Domain'}
+                    </div>
+
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-green-500 text-white font-bold shadow-md text-xs overflow-hidden whitespace-nowrap truncate">
+                        {categories.licenses.find(l => l.id === lot.item.licenseId)?.type || 'License'}
+                    </div>
+
+                    <div class="w-16 h-16 flex items-center justify-center rounded-full bg-yellow-500 text-white font-bold shadow-md text-xs overflow-hidden whitespace-nowrap truncate">
+                        {categories.languages.find(l => l.id === lot.item.languageId)?.name || 'Language'}
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4 bg-white p-6 rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold text-gray-800">{lot.item.name}</h1>
+                <p class="text-gray-600">{lot.item.description}</p>
+                <div class="text-gray-700">
+                    <p><strong>Min Bid:</strong> ${lot.minBid}</p>
+                    <p><strong>Current Top Bid:</strong> ${lot.topBid ?? lot.minBid}</p>
+                    <p><strong>Time Left:</strong> {timeLeft}</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 bg-white p-6 rounded-lg shadow-md h-full">
+                <h2 class="text-lg font-semibold text-gray-800">Bids</h2>
+                <div class="overflow-y-auto max-h-64 space-y-2">
+                    {#if bids.length > 0}
+                        {#each bids as bid}
+                            <div class="p-2 border rounded-md shadow-sm">
+                                <p class="text-sm"><strong>Bidder:</strong> {bid.userId}</p>
+                                <p class="text-sm"><strong>Amount:</strong> ${bid.amount}</p>
+                                <p class="text-xs text-gray-500">{bid.timestamp}</p>
+                            </div>
+                        {/each}
+                    {:else}
+                        <p class="text-gray-500 text-sm">No bids yet. Be the first!</p>
+                    {/if}
+                </div>
+
+                {#if $isLoggedIn && !currentUser.isAdmin}
+                    <div class="space-y-2">
+                        <input
+                                type="number"
+                                bind:value={newBidAmount}
+                                min={lot.topBid ?? lot.minBid}
+                                step="1"
+                                placeholder="Enter your bid"
+                                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                        <button
+                                on:click={placeBid}
+                                class="w-full bg-emerald-600 text-white py-2 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                            Place Bid
+                        </button>
+                        {#if bidError}
+                            <ErrorMessage message={bidError} />
+                        {/if}
+                    </div>
                 {/if}
-            {:else}
-                <p>Only bidders can place bids.</p>
-            {/if}
+            </div>
         </div>
     {/if}
 </main>
+
