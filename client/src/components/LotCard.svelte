@@ -13,6 +13,7 @@
     export let onDeleteClick;
     export let onEditClick;
     export let isAdmin = false;
+    export let userBid;
 </script>
 
 <div class="flex border rounded-lg shadow-md overflow-hidden transform scale-100">
@@ -54,11 +55,18 @@
     <div class="w-1/5 flex flex-col items-center justify-between p-4">
         <p class="text-[10px] md:text-sm font-semibold text-gray-500">Top Bid</p>
         <p class="text-xs md:text-lg font-bold text-gray-800">{minBid}</p>
-        <button
-                class="bg-blue-500 text-white px-3 py-1 md:px-4 md:py-2 rounded-md shadow-md hover:bg-blue-600"
-                on:click={onDetailsClick}>
-            Bid Now
-        </button>
+        {#if userBid}
+            <div class="text-center text-sm font-bold text-emerald-600">
+                Your bid: ${userBid}
+            </div>
+        {:else}
+            <button
+                    class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    on:click={onDetailsClick}
+            >
+                Bid Now
+            </button>
+        {/if}
         <button
                 class="mt-2 border px-3 py-1 md:px-4 md:py-2 rounded-md text-gray-600 hover:bg-gray-100"
                 on:click={onDetailsClick}
