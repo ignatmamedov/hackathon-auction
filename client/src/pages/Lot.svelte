@@ -17,6 +17,7 @@
     let bidError = '';
     let timeLeft = '';
     let eventSource;
+    let timeInterval;
 
     async function fetchCategories() {
         const res = await fetch('http://localhost:3000/api/categories');
@@ -35,6 +36,7 @@
         }
         lot = await res.json();
         lot.minBid = Number(lot.minBid);
+        updateTime();
     }
 
     async function fetchBids() {
@@ -116,6 +118,8 @@
         await fetchBids();
         updateTime();
 
+        timeInterval = setInterval(updateTime, 1000);
+
         eventSource = new EventSource('http://localhost:3000/api/bids/updates');
 
         eventSource.onmessage = (event) => {
@@ -133,6 +137,7 @@
 
     onDestroy(() => {
         if (eventSource) eventSource.close();
+        if (timeInterval) clearInterval(timeInterval);
     });
 </script>
 
