@@ -86,7 +86,7 @@ indication. They are incomplete, and you are allowed to take some design liberti
 
 ### Homepage
 
-![](assets/homepage.jpeg)
+![](assets/homepage.png)
 
 The homepage should show a list of items up for auction. Users should be able to filter and search the items. If a user is not logged in the user should be able to log in. Items should link to the item details page. A change in filter values should immediately be visible in the list of auction items.  
 

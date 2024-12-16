@@ -1,0 +1,227 @@
+### Get all lots successfully /api/lots - 200
+GET {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots
+Accept: application/json
+
+> {%
+    client.test("Retrieve all lots successfully", function () {
+        client.assert(response.status === 200, "Response is not 200");
+        client.assert(Array.isArray(response.body), "Response body is not an array");
+        client.assert(response.body.length > 0, "No lots returned");
+    });
+%}
+
+### Get a specific lot successfully /api/lots/:id - 200
+GET {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/d9db83b4-d974-4c30-88bd-0bff9aa7dd46
+Accept: application/json
+
+> {%
+    client.test("Retrieve a lot successfully", function () {
+        client.assert(response.status === 200, "Response is not 200");
+        client.assert(response.body != null, "Response body is null");
+        client.assert(response.body.id === "d9db83b4-d974-4c30-88bd-0bff9aa7dd46", "Lot ID does not match");
+    });
+%}
+
+### Get non-existent lot /api/lots/:id - 404
+GET {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/non-existent-lot-id
+Accept: application/json
+
+> {%
+    client.test("Lot not found", function () {
+        client.assert(response.status === 404, "Response is not 404");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/not found/i), "No 'not found' message");
+    });
+%}
+
+### Create a new lot successfully /api/lots - 201
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "item": {
+    "name": "New Lot Item",
+    "description": "Brand new lot item for testing",
+    "imgUrl": "https://example.com/image.jpg",
+    "domainId": 1,
+    "licenseId": 2,
+    "languageId": 2
+  },
+  "start": "2024-12-20T08:00:00Z",
+  "end": "2024-12-25T20:00:00Z",
+  "minBid": 100
+}
+
+> {%
+    client.test("Create a new lot successfully", function () {
+        client.assert(response.status === 201, "Response is not 201");
+        client.assert(response.body.lot != null, "Lot not returned");
+        client.global.set("new_lot_id", response.body.lot.id);
+    });
+%}
+
+### Create a lot with invalid category /api/lots - 400
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "item": {
+    "name": "Invalid Category Lot",
+    "description": "This lot has an invalid category",
+    "imgUrl": "https://example.com/image.jpg",
+    "domainId": 999,
+    "licenseId": 999,
+    "languageId": 999
+  },
+  "start": "2024-12-20T08:00:00Z",
+  "end": "2024-12-25T20:00:00Z",
+  "minBid": 100
+}
+
+> {%
+    client.test("Invalid category error", function () {
+        client.assert(response.status === 400, "Response is not 400");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/does not exist/i), "No 'does not exist' message");
+    });
+%}
+
+### Unauthorized lot creation /api/lots - 401
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Unauthorized error", function () {
+        client.assert(response.status === 401, "Response is not 401");
+    });
+%}
+
+### Create a lot with invalid JSON format /api/categories - 400
+POST {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "item": {
+    "name": "New Lot Item",
+    "description": "Brand new lot item for testing",
+    "imgUrl": "https://example.com/image.jpg",
+    "domainId": 1,
+    "licenseId": 2,
+    "languageId": 2
+  },
+  "start": "2024-12-20T08:00:00Z"
+  "end": "2024-12-25T20:00:00Z",
+  "minBid": 100
+}
+
+> {%
+    client.test("Invalid JSON format error on categories", function () {
+        client.assert(response.status === 400, "Response is not 400");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/Invalid JSON format/i), "No 'Invalid JSON format' message");
+    });
+%}
+
+### Update a lot successfully /api/lots/:id - 200
+PATCH {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/d9db83b4-d974-4c30-88bd-0bff9aa7dd46
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "item": {
+    "name": "Updated Lot Name"
+  }
+}
+
+> {%
+    client.test("Update lot successfully", function () {
+        client.assert(response.status === 200, "Response is not 200");
+        client.assert(response.body.lot != null, "Lot not returned");
+        client.assert(response.body.lot.item.name === "Updated Lot Name", "Lot name not updated");
+    });
+%}
+
+### Update non-existent lot /api/lots/:id - 404
+PATCH {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/non-existent-lot-id
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "item": {
+    "name": "Non-existent Lot Update"
+  }
+}
+
+> {%
+    client.test("Lot not found", function () {
+        client.assert(response.status === 404, "Response is not 404");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/not found/i), "No 'not found' message");
+    });
+%}
+
+### Get all bids for a lot successfully /api/lots/:id/bids - 200
+GET {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/{{new_lot_id}}/bids
+Accept: application/json
+
+> {%
+    client.test("Retrieve bids successfully", function () {
+        client.assert(response.status === 200, "Response is not 200");
+        client.assert(Array.isArray(response.body), "Response is not an array");
+    });
+%}
+
+### Get bids for non-existent lot /api/lots/:id/bids - 404
+GET {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/non-existent-lot-id/bids
+Accept: application/json
+
+> {%
+    client.test("Lot not found", function () {
+        client.assert(response.status === 404, "Response is not 404");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/not found/i), "No 'not found' message");
+    });
+%}
+
+### Delete a lot successfully /api/lots/:id - 200
+DELETE {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/{{new_lot_id}}
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+> {%
+    client.test("Lot deleted successfully", function () {
+        client.assert(response.status === 200, "Response is not 200");
+    });
+%}
+
+### Delete non-existent lot /api/lots/:id - 404
+DELETE {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/non-existent-lot-id
+Accept: application/json
+Authorization: Bearer {{admin_token}}
+
+> {%
+    client.test("Lot not found", function () {
+        client.assert(response.status === 404, "Response is not 404");
+        client.assert(response.body.error != null, "Error not returned");
+        client.assert(response.body.error.message.match(/not found/i), "No 'not found' message");
+    });
+%}
+
+### Unauthorized lot deletion /api/lots/:id - 401
+DELETE {{protocol}}//{{host}}:{{port}}/{{default_path}}/lots/{{new_lot_id}}
+Accept: application/json
+
+> {%
+    client.test("Unauthorized error", function () {
+        client.assert(response.status === 401, "Response is not 401");
+    });
+%}
