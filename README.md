@@ -1,75 +1,146 @@
-# Web Advanced Template
+# Testing
 
-- [Introduction](./README.md#introduction)
-- [Template](./README.md#template)
-  - [Assignment](./README.md#assignment)
-  - [Client](./README.md#client)
-  - [Server](./README.md#server)
-  - [Documentation](./README.md#documentation)
-  - [Tests](./README.md#tests)
+## Traceability matrix
+
+### Functional
+
+| Test | F1 | F2 | F3 | F4 | F5 | F6 | F7 | F8 | F9 | F10 |
+|:----:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:---:|
+|  T1  |  X |  X |  X |    |    |    |  X |    |    |     |
+|  T2  |    |    |    |  X |    |    |    |  X |  X |     |
+|  T3  |    |    |    |    |  X |  X |    |    |    |     |
+|  T4  |    |    |    |    |    |    |    |    |    |  X  |
+
+### Non functional
+
+| Test | NF1 | NF2 | NF3 | NF4 | NF5 | NF6 | NF7 | NF8 | NF9 | NF10 | NF11 | NF12 | NF13 | NF14 | NF15 | NF16 | NF17 | NF18 | NF19 |
+|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
+|  T1  |  X  |  X  |  X  |  X  |  X  |     |     |  X  |  X  |  X   |  X   |      |      |      |  X   |      |      |      |      |
+|  T2  |     |     |     |     |     |  X  |  X  |     |     |      |      |  X   |      |      |      |  X   |  X   |      |      |
+|  T3  |     |     |     |     |     |     |     |     |     |      |      |      |      |      |      |      |      |  X   |  X   |
+|  T4  |     |     |     |     |     |     |     |     |     |      |      |      |  X   |  X   |  X   |      |      |  X   |  X   |
+
+## Test plan
+
+### T1 (List/Search/Filter Auctions)
+**Preconditions:**
+- Backend (Node/Express) and frontend (Svelte) running.
+- Multiple lots with different domains/licenses/languages exist.
+- At least one user without login (guest).
+
+**Steps:**
+1. Open homepage. Verify auction list is displayed (F1).
+2. Check each item: name, bid, end time (F2).
+3. Use search input to find a specific lot by name (F3).
+4. Apply filters (e.g., domain, license, language) and verify results (F7).
+
+**Expected:**
+- Correct listing, search, filter.
+- Valid JSON, correct HTTP methods, status codes (NF1–NF5), clear errors if any (NF8).
+- Separation of concerns, tests documented (NF9–NF11).
+- Immediately reflect changes in UI (filter results).
+
+### T2 (Bidding)
+**Preconditions:**
+- A logged-in user with bidder role.
+- An active lot available.
+- Another user or window to observe real-time updates.
+
+**Steps:**
+1. As a bidder, place a bid on a lot (POST /api/bids).
+2. Attempt to modify or delete the bid – should fail (F4).
+3. Open same lot in another window/user, place a new bid, verify real-time update (F8).
+4. Try to bid as admin – expect "Forbidden" (F9).
+
+**Expected:**
+- Bids can’t be changed once placed.
+- Real-time updates shown.
+- Only bidders can bid.
+- Check sorting/limit if implemented (NF6–NF7).
+- After registration, user can bid without re-login (NF12).
+- JWT (NF16), Bcrypt (NF17) confirmed.
+- Role-based auth (NF18–NF19).
+
+### T3 (Validation)
+**Preconditions:**
+- Registration and login forms available.
+- API accessible via Postman.
+
+**Steps:**
+1. On registration form, enter invalid email or short password. Client-side validation prevents submit (F5).
+2. Send invalid POST /api/auth (missing fields) via Postman. Expect 400 and error message (F6).
+
+**Expected:**
+- Client/server validation works.
+- Proper error responses, role checks (eventually).
+- Role-based checks confirmed (NF18–NF19).
+
+### T4 (Admin Operations)
+**Preconditions:**
+- Admin user logged in.
+- Existing lot for update/delete.
+
+**Steps:**
+1. As admin, POST /api/lots(press Add Lot) to create a new lot (F10).
+2. PATCH /api/lots/{id}(press Edit) to update a lot.
+3. DELETE /api/lots/{id}(press Delete) to remove a lot.
+4. Non-admin attempts same actions → 403 Forbidden.
+
+**Expected:**
+- Admin can manage auctions fully.
+- Confirm Svelte frontend, Node/Express backend structure (NF13–NF15).
+- Role-based checks (NF18–NF19).
+
+## Test report
+
+## T1: Display and Filtering of Lots
+- **Displaying the list of lots**  
+  ![T1-lots.png](documentation/screenshots/T1-lots.png)
+
+- **Searching lots**  
+  ![T1-search.png](documentation/screenshots/T1-search.png)
+
+- **Filtering the list of lots**  
+  ![T1-filters.png](documentation/screenshots/T1-filters.png)
+
+## T2: Placing a Bid
+- **Placing a bid**  
+  ![T2-place-bid.png](documentation/screenshots/T2-place-bid.png)
+
+- **Attempting to place a bid as a non-authorized user**  
+  ![T2-bid-forbidden.png](documentation/screenshots/T2-bid-forbidden.png)
+
+- **Real-time updates (opened in another window)**  
+  ![T2-realtime.png](documentation/screenshots/T2-realtime.png)
+
+## T3: Client-Side and Server-Side Validation
+- **Client-side validation of registration form**  
+  ![T3-client-validation.png](documentation/screenshots/T3-client-validation.png)
+
+- **Server-side validation with incorrect data (400 response in Postman)**  
+  ![T3-server-validation.png](documentation/screenshots/T3-server-validation.png)
+
+## T4: Admin Management of Lots
+- **Creating a lot as an admin**  
+  ![T4-admin-create.png](documentation/screenshots/T4-admin-create.png)
+
+- **Updating a lot as an admin**  
+  ![T4-admin-update.png](documentation/screenshots/T4-admin-update.png)
+
+- **Deleting a lot as an admin (200 OK)**  
+  ![T4-admin-delete.png](documentation/screenshots/T4-admin-delete.png)
+
+- **Attempting to modify a lot as a non-admin (403 Forbidden)**  
+  ![T4-nonadmin-forbidden.png](documentation/screenshots/T4-nonadmin-forbidden.png)
 
 
-## Introduction
-
-Welcome to Web Advanced. Last year during Web Basics you learned about basic web techniques and languages such 
-as HTML, CSS, Javascript and REST. These techniques are the basis of web applications today. Although these applications
-can be accessed from a web browser, they tend to be a lot more dynamic than just plain old sites. Examples of these 
-kinds of applications are Gmail, Netflix, WhatsApp Web and Google Docs.
-
-The foundations for these types of applications are laid by Javascript. This programming language is built into every 
-browser. Therefor, this module will put a lot of emphasis on Javascript. We will be using it client-side (within the 
-browser) as well as server-side (using Node.js).
-
-Though Web Basics started out as web browser applications this is no longer the case. Several frameworks have
-been developed to allow web technology to be used on mobile devices such as [React native](https://reactnative.dev/). 
-Also using [Electron](https://www.electronjs.org/) it is possible to build a desktop application. For example Twitch
-and Discord were built with Electron.
-
-## Template
-
-This template is the basis of the backend and front-end application you have to build as the assignment for this course.
-The template contains everything you need to built both the backend and the front-end. This page explains how to use it.
-Each section below explains a root directory in the template.
-
-### Assignment
-
-In order to receive a passing grade you need to implement the [assignment](./assignment/README.md). The assignment 
-description can be found in the `assignment` directory. This directory contains the explanation if the assignment as 
-well as a partial functional design. The functional design contains requirements, user stories and basic wireframes.
-
-### Client
-
-The `client` directory has to contain your client. The client has to be built using [Svelte](https://svelte.dev/). The 
-base application has already been added, and you will **not** have to install it yourself. Teachers will run the 
-`npm install` and `npm start` scripts from the `package.json` file in order to start your application. If it does not
-start your entry will **not** be graded. The required scripts have already been added.
-
-After downloading the template run `npm i` in the `client` directory to download and install the required dependencies.
-
-### Server
-
-As stated in the course manual the backend will be created using [node.js](https://nodejs.org/). Node js is a server 
-side environment to run Javascript applications. On top of Node we will use Express 
-[expressjs.com](https://expressjs.com/). Express is a framework capable of functioning as a REST server. A default hello 
-world application has already been added. 
-
-While developing you can start the server using `npm run dev` in the `server` directory. This will start the server
-using the Nodemon dependency. Nodemon will restart the server if a change in the source code is detected. This means you
-will not have to restart the server manually after every code change.
-
-After downloading the template run `npm i` in the `server` directory to download and install the required dependencies.
-
-### Documentation
-
-As part of the assignment you will need to document some of your work. This documentation should be placed in the 
-`documentation` directory. Documentation must be written in 
-[Markdown](https://www.jetbrains.com/help/upsource/markdown-syntax.html). **Not** Word or PDF. Feel free to add images 
-to explain things better. Markdown has many options to create nice documentation, and it renders well on most Git 
-hosters such as Gitlab and GitHub.
+## T5: Viewing Won Auctions
+- **Displaying the list of won auctions**  
+  ![T5-won-auctions.png](documentation/screenshots/T5-won-auctions.png)
 
 
-### Tests
+## Test Results
 
-In order to validate the functionality of your server it needs to be tested. Testing will be done using REST calls from
-within IntelliJ. These tests are explained in greater detail in the [testing section](./tests/rest/README.md). A few 
-examples for the default hello world and authentication endpoints have been added.
+All tests have been successfully passed.
+
+![All Tests Passed](documentation/screenshots/all-tests-passed.png)
